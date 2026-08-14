@@ -26,7 +26,9 @@ npm run build   # 构建 dist/(postbuild 自动查公式/插图/链接)
 - **术语**:沿承 vault `03 - AREAS/learning/category-theory/` 旧译项目词汇表(composition=组合、恒等态射、终端对象等),全表在 `glossary/glossary.md`,既有决定不重开。
 - **插图**:交换图手绘 SVG 存 vault `svg/<slug>.<n>.svg`,paper-ink-v1 明暗契约(`docs/authoring/svg-theme.md`);自定义颜色走 `svg-special-{text,graphic,fill,background}-<name>` 命名空间。旧译的 webp 位图不搬,一律重绘。
 - **旧材料**:CTFP 前 7 章译文在 vault `03 - AREAS/learning/category-theory/`,作参考底稿;该目录 README 的词汇表已迁入本项目。
-- **部署**:GitHub Pages 项目页,base `/why-programs-compose`,唯一事实源 `src/lib/base.mjs`。站内绝对路径必须经 `withBase()` 或 rehype-prefix-base。
+- **部署**:GitHub Pages 项目页,base `/why-programs-compose`,由 `src/lib/site.config.mjs` 派生进 `src/lib/base.mjs`。站内绝对路径必须经 `withBase()` 或 rehype-prefix-base。
+- **站点身份唯一事实源**:`src/lib/site.config.mjs`(仓库名、账号、品牌名、tagline、内容许可)。BASE、仓库链接、主题存储键、vault 目录与环境变量名全部派生,`src/`、`scripts/`、`tests/` 里**不得再出现身份字面量**。每 topic 必改的短文案在 `src/lib/site-copy.mjs`;含链接的整段留在页面里由 `TOPIC:` 注释标出。
+- **本仓库是 template repo**:开新 topic 走 `docs/runbooks/new-topic.md`,勿再 fork 上游 why-models-learn(其硬编码计数与 known_absent 限制未修)。
 - **fork 放宽的两条校验**(相对上游 why-models-learn):learning-paths 不硬编码分区数量;主线允许 known_absent 词条(全库 TODO 起步,learn 页对未毕业词条渲染纯文本)。
 
 ## 骨架

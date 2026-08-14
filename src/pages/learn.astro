@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getLearningPaths } from '../lib/learning-paths.mjs';
 import { withBase } from '../lib/base.mjs';
+import { COPY } from '../lib/site-copy.mjs';
 import { getEntries } from './_entries.mjs';
 
 const learning = getLearningPaths();
@@ -23,7 +24,7 @@ function groupBySection(items) {
 }
 
 function sectionName(sectionId) {
-  if (sectionId === 'math-core') return learning.math.layers.core?.name_zh || '最小记号前置';
+  if (sectionId === 'math-core') return learning.math.layers.core?.name_zh || COPY.learn.coreLayerFallback;
   return learning.sections.get(sectionId)?.name_zh || sectionId;
 }
 
@@ -36,18 +37,18 @@ const backfill = learning.math.layers.backfill;
 const reference = learning.math.layers.reference;
 ---
 
-<BaseLayout title="学习路径 | 程序为什么能组合">
+<BaseLayout title="学习路径">
   <div class="learning-path-page">
     <nav class="breadcrumbs" aria-label="面包屑">
       <a href={withBase('/')}>全库目录</a><span>/</span><span>学习路径</span>
     </nav>
 
     <header class="learning-path-header">
-      <span class="page-kicker">第一遍主线 · 无状态入口</span>
-      <h1>先看到组合，再回补需要的记号。</h1>
-      <p>这条路径按 CTFP 的教学顺序走完范畴论主干。记号前置只有 {core.entries.length} 篇速查，读到能认出记号即可；你可以沿主线继续，不需要先精通 Haskell 或类型理论。</p>
+      <span class="page-kicker">{COPY.learn.kicker}</span>
+      <h1>{COPY.learn.title}</h1>
+      <p>{COPY.learn.leadFor(core.entries.length)}</p>
       <blockquote class="epigraph">
-        <p>先让「组合」的直觉出现，再为当前概念补上必要的形式化。</p>
+        <p>{COPY.learn.epigraph}</p>
         <footer>——本项目学习路径说明</footer>
       </blockquote>
     </header>
@@ -59,7 +60,7 @@ const reference = learning.math.layers.reference;
       </div>
       <ol>
         <li><strong>现在读</strong><span>沿第一遍主线推进。</span></li>
-        <li><strong>遇到推导困难时回补</strong><span>只打开当前词条真正引用的记号。</span></li>
+        <li><strong>遇到推导困难时回补</strong><span>{COPY.learn.backfillHint}</span></li>
         <li><strong>按兴趣参考</strong><span>在完成主线后继续理论轨。</span></li>
       </ol>
     </section>
@@ -199,7 +200,7 @@ const reference = learning.math.layers.reference;
     )}
 
     <footer class="learning-path-footer">
-      <a class="button-primary" href={withBase('/category/notation/')}>查看记号地基</a>
+      <a class="button-primary" href={withBase(`/category/${COPY.learn.footerCta.sectionDir}/`)}>{COPY.learn.footerCta.label}</a>
       <a class="button-secondary" href={withBase('/')}>返回全库目录</a>
     </footer>
   </div>

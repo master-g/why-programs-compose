@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
 import { BASE } from "./src/lib/base.mjs";
+import { SITE_ORIGIN } from "./src/lib/site.config.mjs";
 import { shikiConfig } from "./src/lib/shiki-theme.mjs";
 import danglingJson from "./src/lib/dangling-links.json" with { type: "json" };
 import { createArticleMarkdownPipeline } from "./src/lib/markdown-pipeline.mjs";
@@ -22,8 +23,8 @@ const sectionDirs = getSections().map((section) => section.dir);
 console.log(`[astro-config] built slug map: ${slugMap.size} articles`);
 
 export default defineConfig({
-	// GitHub Pages 项目页:https://master-g.github.io/why-programs-compose/
-	site: "https://master-g.github.io",
+	// GitHub Pages 项目页:<SITE_ORIGIN><BASE>/,两者都派生自 site.config.mjs。
+	site: SITE_ORIGIN,
 	base: BASE,
 	compressHTML: true,
 	trailingSlash: "always",

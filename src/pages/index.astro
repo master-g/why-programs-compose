@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getParts, getSections } from '../lib/sections.mjs';
 import { withBase } from '../lib/base.mjs';
+import { COPY } from '../lib/site-copy.mjs';
 import { getEntries } from './_entries.mjs';
 
 const parts = getParts();
@@ -17,12 +18,12 @@ for (const section of sections) {
 }
 ---
 
-<BaseLayout title="全库目录 | 程序为什么能组合">
+<BaseLayout title="全库目录">
   <div class="home-page">
     <header class="home-hero">
-      <span class="page-kicker">从组合到单子</span>
-      <h1>程序为什么<br />能组合</h1>
-      <p>一个写给未来的自己的结构化学习库。从「组合是编程的本质」出发，逐步抽象到函子、自然变换、极限、伴随与单子；每个概念先在 Rust 里落地一次。</p>
+      <span class="page-kicker">{COPY.home.kicker}</span>
+      <h1>{COPY.home.titleLines.map((line, index) => <>{index > 0 && <br />}{line}</>)}</h1>
+      <p>{COPY.home.lead}</p>
       <div class="home-hero__actions">
         <a class="button-primary" href={withBase('/learn/')}>从这里开始</a>
         <a class="button-secondary" href="#section-index-title">浏览全库目录</a>

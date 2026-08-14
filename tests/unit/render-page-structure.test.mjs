@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { renderPageMarkdown } from '../../src/pages/_render-page.mjs';
 import { makeMarkdownSanitizeSchema } from '../../src/lib/markdown-pipeline.mjs';
+import { BASE } from '../../src/lib/base.mjs';
 
 const astroConfig = readFileSync('astro.config.mjs', 'utf8');
 const renderHelper = readFileSync('src/pages/_render-page.mjs', 'utf8');
@@ -91,7 +92,7 @@ The value $x + y$ stays inline.
       html,
       /<aside class="sidenote sidenote--margin" role="note" aria-label="符号提醒">/,
     );
-    assert.match(html, /href="\/why-programs-compose\/category\/"/);
+    assert.match(html, new RegExp(`href="${BASE}/category/"`));
     assert.match(html, /<span class="sidenote__body">[\s\S]*<mjx-container class="MathJax"/);
     assert.doesNotMatch(html, /data-footnotes|class="footnotes"|Footnotes/);
   });
@@ -131,7 +132,7 @@ The value $x + y$ stays inline.
     assert.match(html, /<figure class="marginfigure"><img[^>]+alt="示意"[^>]*><figcaption>图注<\/figcaption><\/figure>/);
     assert.match(html, /<figure class="fullwidth fullwidth--table">[\s\S]*<table>/);
     assert.match(html, /<blockquote class="epigraph"><p>先说明问题。<\/p><footer>——来源<\/footer><\/blockquote>/);
-    assert.match(html, /src="\/why-programs-compose\/assets\/categories\/svg\/example\.1\.svg"/);
+    assert.match(html, new RegExp(`src="${BASE}/assets/categories/svg/example\\.1\\.svg"`));
   });
 
   it('fails closed when a layout marker reaches HAST with an invalid shape', async () => {

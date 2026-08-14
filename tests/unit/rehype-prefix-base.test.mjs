@@ -2,8 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { visit } from "unist-util-visit";
 import rehypePrefixBase from "../../src/plugins/rehype-prefix-base.mjs";
-
-const BASE = "/why-programs-compose";
+import { BASE } from "../../src/lib/base.mjs";
 
 function makeLink(text, href) {
 	return {
@@ -41,7 +40,7 @@ describe("rehype-prefix-base", () => {
 		const tree = { type: "root", children: [makeLink("向量", "/vectors/")] };
 		run(tree);
 		const [a] = find(tree, "a");
-		assert.equal(a.properties.href, "/why-programs-compose/vectors/");
+		assert.equal(a.properties.href, `${BASE}/vectors/`);
 	});
 
 	it("prefixes category links and asset images", () => {
@@ -57,11 +56,11 @@ describe("rehype-prefix-base", () => {
 		const [img] = find(tree, "img");
 		assert.equal(
 			a.properties.href,
-			"/why-programs-compose/category/linear-algebra/",
+			`${BASE}/category/linear-algebra/`,
 		);
 		assert.equal(
 			img.properties.src,
-			"/why-programs-compose/assets/linear-algebra/svg/x.svg",
+			`${BASE}/assets/linear-algebra/svg/x.svg`,
 		);
 	});
 
@@ -69,7 +68,7 @@ describe("rehype-prefix-base", () => {
 		const tree = { type: "root", children: [makeLink("首页", "/")] };
 		run(tree);
 		const [a] = find(tree, "a");
-		assert.equal(a.properties.href, "/why-programs-compose/");
+		assert.equal(a.properties.href, `${BASE}/`);
 	});
 
 	it("leaves external URLs, protocol-relative, anchors and relative paths alone", () => {
@@ -95,11 +94,11 @@ describe("rehype-prefix-base", () => {
 	it("is idempotent: already-prefixed paths are not double-prefixed", () => {
 		const tree = {
 			type: "root",
-			children: [makeLink("向量", "/why-programs-compose/vectors/")],
+			children: [makeLink("向量", `${BASE}/vectors/`)],
 		};
 		run(tree);
 		const [a] = find(tree, "a");
-		assert.equal(a.properties.href, "/why-programs-compose/vectors/");
+		assert.equal(a.properties.href, `${BASE}/vectors/`);
 	});
 
 	it("does nothing when base is empty", () => {
@@ -111,8 +110,8 @@ describe("rehype-prefix-base", () => {
 
 	it("tolerates a trailing slash in the base option", () => {
 		const tree = { type: "root", children: [makeLink("向量", "/vectors/")] };
-		run(tree, { base: "/why-programs-compose/" });
+		run(tree, { base: `${BASE}/` });
 		const [a] = find(tree, "a");
-		assert.equal(a.properties.href, "/why-programs-compose/vectors/");
+		assert.equal(a.properties.href, `${BASE}/vectors/`);
 	});
 });

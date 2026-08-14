@@ -3,6 +3,7 @@ import SearchBox from '../components/SearchBox.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import '../styles/site.css';
 import { withBase } from '../lib/base.mjs';
+import { SITE, REPO_URL, THEME_STORAGE_KEY } from '../lib/site.config.mjs';
 
 type ActiveNav = 'learn' | 'catalog' | 'glossary' | 'about';
 
@@ -16,9 +17,12 @@ const navItems: ReadonlyArray<{ id: ActiveNav; href: string; label: string }> = 
 export interface Props {
   activeNav?: ActiveNav;
   lang?: string;
+  /** 页名,不含品牌后缀;省略时只用品牌名(首页之外都应给值)。 */
   title?: string;
 }
-const { activeNav: activeNavProp, lang = 'zh-CN', title = '程序为什么能组合' } = Astro.props;
+const { activeNav: activeNavProp, lang = 'zh-CN', title } = Astro.props;
+// 「页名 | 品牌」是全站 title 口径,后缀在这里统一拼,页面只给页名。
+const documentTitle = title ? `${title} | ${SITE.brandZh}` : SITE.brandZh;
 const currentPath = Astro.url.pathname;
 const activeNav = activeNavProp
   ?? (currentPath.startsWith(withBase('/category/'))
@@ -34,11 +38,11 @@ const navCurrent = (item: ActiveNav) => activeNav === item ? 'page' : undefined;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
-    <title>{title}</title>
-    <script is:inline>
+    <title>{documentTitle}</title>
+    <script is:inline define:vars={{ themeKey: THEME_STORAGE_KEY }}>
       (() => {
         try {
-          const saved = localStorage.getItem('why-programs-compose-theme');
+          const saved = localStorage.getItem(themeKey);
           if (saved === 'black') document.documentElement.dataset.theme = 'black';
         } catch (_) {
           // 本地文件预览可能禁用 storage。
@@ -52,9 +56,9 @@ const navCurrent = (item: ActiveNav) => activeNav === item ? 'page' : undefined;
     <header class="site-header">
       <div class="site-header__inner">
         <div class="site-header__discovery">
-          <a class="site-brand" href={withBase('/')} aria-label="程序为什么能组合首页">
-            <span class="site-brand__name">程序为什么能组合</span>
-            <span class="site-brand__tagline">结构化范畴论条目</span>
+          <a class="site-brand" href={withBase('/')} aria-label={`${SITE.brandZh}首页`}>
+            <span class="site-brand__name">{SITE.brandZh}</span>
+            <span class="site-brand__tagline">{SITE.taglineZh}</span>
           </a>
           <SearchBox variant="desktop" />
         </div>
@@ -63,7 +67,7 @@ const navCurrent = (item: ActiveNav) => activeNav === item ? 'page' : undefined;
           {navItems.map((item) => (
             <a href={item.href} aria-current={navCurrent(item.id)}>{item.label}</a>
           ))}
-          <a class="site-nav__external" href="https://github.com/master-g/why-programs-compose" target="_blank" rel="noopener noreferrer" aria-label="GitHub 仓库">
+          <a class="site-nav__external" href={REPO_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub 仓库">
             <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
           </a>
           <ThemeToggle />
@@ -84,7 +88,7 @@ const navCurrent = (item: ActiveNav) => activeNav === item ? 'page' : undefined;
               {navItems.map((item) => (
                 <a href={item.href} aria-current={navCurrent(item.id)}>{item.label}</a>
               ))}
-              <a href="https://github.com/master-g/why-programs-compose" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
               <div class="site-menu__appearance">
                 <span>主题</span>
                 <ThemeToggle />
@@ -100,11 +104,11 @@ const navCurrent = (item: ActiveNav) => activeNav === item ? 'page' : undefined;
     </main>
 
     <footer class="site-footer">
-      <span>程序为什么能组合 · 独立界面与中文排版</span>
-      <span>正文与原创插图采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></span>
+      <span>{SITE.brandZh} · 独立界面与中文排版</span>
+      <span>正文与原创插图采用 <a href={SITE.contentLicense.url}>{SITE.contentLicense.id}</a></span>
     </footer>
 
-    <script is:inline>
+    <script is:inline define:vars={{ themeKey: THEME_STORAGE_KEY }}>
       (() => {
         const root = document.documentElement;
         const themeToggles = Array.from(document.querySelectorAll('[data-theme-toggle]'));
@@ -123,7 +127,7 @@ const navCurrent = (item: ActiveNav) => activeNav === item ? 'page' : undefined;
             button.setAttribute('title', label);
           });
           if (persist) {
-            try { localStorage.setItem('why-programs-compose-theme', next); } catch (_) {}
+            try { localStorage.setItem(themeKey, next); } catch (_) {}
           }
         }
 

@@ -24,7 +24,8 @@ describe('independent visual contracts', () => {
 
   it('uses semantic site navigation and a text brand', () => {
     assert.match(baseLayout, /class="site-header"/);
-    assert.match(baseLayout, /class="site-brand__name">程序为什么能组合/);
+    // 品牌串来自 site.config.mjs,契约只约束「品牌名绑定在这个位置」,不锁具体 topic 的文字。
+    assert.match(baseLayout, /class="site-brand__name">\{SITE\.brandZh\}/);
     assert.match(baseLayout, /class="site-menu"/);
     assert.doesNotMatch(baseLayout, /icon-algebrica/);
   });
@@ -106,7 +107,8 @@ describe('independent visual contracts', () => {
     assert.notEqual(learnPage, '', 'learning path page is missing');
     assert.match(learnPage, /class="learning-path-page"/);
     assert.match(learnPage, /class="learning-path-stage"/);
-    assert.match(learnPage, /记号前置/);
+    // 前置层名称来自 site-copy.mjs;契约只要求页面绑定它,不锁具体 topic 的文字。
+    assert.match(learnPage, /COPY\.learn\.coreLayerFallback/);
     assert.match(learnPage, /遇到推导困难时回补/);
     assert.match(learnPage, /可选支线/);
     assert.match(learnPage, /按兴趣参考/);

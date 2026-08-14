@@ -11,7 +11,7 @@ import { visit } from "unist-util-visit";
  * 锚点(#)与 MathJax SVG 的 <use xlink:href="#..."> 不以 / 开头,天然不命中。
  *
  * Options:
- *   - base: 部署 base 路径(如 '/why-programs-compose');空串时插件不做事。
+ *   - base: 部署 base 路径(site.config.mjs 派生的 BASE,如 '/<仓库名>');空串时插件不做事。
  */
 export default function rehypePrefixBase({ base = "" } = {}) {
 	const prefix = base.replace(/\/+$/, "");

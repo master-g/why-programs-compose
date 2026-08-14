@@ -2,7 +2,7 @@
 /**
  * 单向同步:Obsidian vault 飞地 → content-zh/。
  *
- * 事实源:vault 的 `03 - AREAS/learning/why-programs-compose/<slug>.md`(feynman 卡片)。
+ * 事实源:vault 的 `03 - AREAS/learning/<SITE.repo>/<slug>.md`(feynman 卡片)。
  * 只同步 `status: complete | reference`;`active` 草稿不出 vault。
  *
  * 适配规则(写作无感,脚本负责):
@@ -35,12 +35,18 @@ import {
 	formatSvgThemeIssue,
 	validateSvgTheme,
 } from "./lib/svg-theme-contract.mjs";
+import {
+	SITE,
+	VAULT_DIR as VAULT_SUBDIR,
+	VAULT_ENV_VAR,
+} from "../src/lib/site.config.mjs";
 
+// 飞地位置:vault 根之下的 learning/<仓库名>/。整条路径可被环境变量覆盖。
 const VAULT_DIR =
-	process.env.WHY_PROGRAMS_COMPOSE_VAULT_DIR ||
+	process.env[VAULT_ENV_VAR] ||
 	join(
 		homedir(),
-		"Documents/ObsidianVaults/Main/03 - AREAS/learning/why-programs-compose",
+		`Documents/ObsidianVaults/Main/03 - AREAS/learning/${VAULT_SUBDIR}`,
 	);
 const VAULT_SVG_DIR = join(VAULT_DIR, "svg");
 const OUT_ROOT = "content-zh";
@@ -75,7 +81,7 @@ function writeVaultIndex(statusMap) {
 
 	const MARK = { complete: "✅", reference: "📚", active: "📝" };
 	const lines = [
-		"# why-programs-compose 索引",
+		`# ${SITE.repo} 索引`,
 		"",
 		"> 生成物(`npm run sync` 顺带生成),勿手改。✅=已毕业 📝=草稿 ⬜=未写;点 ⬜ 的链接可直接创建笔记。",
 		"",

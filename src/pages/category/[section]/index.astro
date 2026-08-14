@@ -18,7 +18,7 @@ const entries = await getEntries();
 const bySlug = new Map(entries.map((entry) => [entry.id.split('/')[1], entry]));
 const learning = getLearningPaths();
 const pathContext = getSectionPathContext(learning, section.dir);
-const title = `${section.name_zh} | 程序为什么能组合`;
+const title = section.name_zh;
 ---
 
 <BaseLayout title={title}>

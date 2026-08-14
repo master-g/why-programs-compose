@@ -7,6 +7,7 @@ import { checkLicenseMetadata } from '../../scripts/check-licenses.mjs';
 import { forbiddenHistoryPaths } from '../../scripts/check-public-history.mjs';
 import { checkSourceReleaseBoundary } from '../../scripts/check-public-release.mjs';
 import { checkStaticSite } from '../../scripts/check-static-site.mjs';
+import { BASE } from '../../src/lib/base.mjs';
 
 describe('public release gates', () => {
   it('rejects forbidden paths anywhere in reachable history', () => {
@@ -40,24 +41,24 @@ describe('public release gates', () => {
   });
 
   it('rejects broken links and forbidden runtime hosts', () => {
-    const distDir = mkdtempSync(join(tmpdir(), 'why-programs-compose-dist-'));
+    const distDir = mkdtempSync(join(tmpdir(), 'site-dist-'));
     writeFileSync(
       join(distDir, 'index.html'),
-      '<a href="/why-programs-compose/missing/">missing</a><script src="https://www.googletagmanager.com/gtag/js"></script>',
+      `<a href="${BASE}/missing/">missing</a><script src="https://www.googletagmanager.com/gtag/js"></script>`,
     );
-    const result = checkStaticSite({ distDir, siteBase: '/why-programs-compose' });
+    const result = checkStaticSite({ distDir, siteBase: BASE });
     assert.ok(result.errors.some((error) => error.includes('/missing/')));
     assert.ok(result.errors.some((error) => error.includes('googletagmanager.com')));
   });
 
   it('accepts resolvable project-base pages and assets', () => {
-    const distDir = mkdtempSync(join(tmpdir(), 'why-programs-compose-dist-'));
+    const distDir = mkdtempSync(join(tmpdir(), 'site-dist-'));
     mkdirSync(join(distDir, 'about'));
     mkdirSync(join(distDir, '_astro'));
-    writeFileSync(join(distDir, 'index.html'), '<a href="/why-programs-compose/about/">about</a><link rel="stylesheet" href="/why-programs-compose/_astro/site.css">');
-    writeFileSync(join(distDir, 'about', 'index.html'), '<a href="/why-programs-compose/">home</a>');
+    writeFileSync(join(distDir, 'index.html'), `<a href="${BASE}/about/">about</a><link rel="stylesheet" href="${BASE}/_astro/site.css">`);
+    writeFileSync(join(distDir, 'about', 'index.html'), `<a href="${BASE}/">home</a>`);
     writeFileSync(join(distDir, '_astro', 'site.css'), 'body { color: black; }');
-    const result = checkStaticSite({ distDir, siteBase: '/why-programs-compose' });
+    const result = checkStaticSite({ distDir, siteBase: BASE });
     assert.deepEqual(result.errors, []);
     assert.equal(result.htmlFiles, 2);
   });

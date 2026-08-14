@@ -6,6 +6,7 @@ import { getSection } from '../lib/sections.mjs';
 import { getArticleNavigation } from '../lib/article-navigation.mjs';
 import { getLearningPaths } from '../lib/learning-paths.mjs';
 import { withBase } from '../lib/base.mjs';
+import { SITE, REPO_URL } from '../lib/site.config.mjs';
 import { getEntries } from './_entries.mjs';
 
 export async function getStaticPaths() {
@@ -32,7 +33,7 @@ const { Content, headings } = await render(entry);
 const sectionMeta = getSection(section);
 const articleIndex = sectionMeta?.entries.indexOf(entry.id.split('/')[1]) ?? -1;
 const articleNumber = articleIndex >= 0 ? articleIndex + 1 : 1;
-const pageTitle = `${entry.data.title} | 程序为什么能组合`;
+const pageTitle = entry.data.title;
 const modeLabel = navigation.mode === 'mainline'
   ? `第一遍主线 · ${navigation.stage.name_zh}`
   : navigation.mode === 'optional-branch'
@@ -72,8 +73,8 @@ const mathRole = pathEntry?.roles.find((role) => role.type === 'math');
     </div>
 
     <footer class="article-attribution">
-      <p>本文正文与原创插图按 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> 提供。</p>
-      <p>软件代码采用 MIT License；软件代码与第三方材料不在此许可范围内。完整边界见仓库的 <a href="https://github.com/master-g/why-programs-compose/blob/main/LICENSE.md" target="_blank" rel="noopener noreferrer">许可范围</a>。</p>
+      <p>本文正文与原创插图按 <a href={SITE.contentLicense.url} target="_blank" rel="noopener noreferrer">{SITE.contentLicense.id}</a> 提供。</p>
+      <p>软件代码采用 MIT License；软件代码与第三方材料不在此许可范围内。完整边界见仓库的 <a href={`${REPO_URL}/blob/main/LICENSE.md`} target="_blank" rel="noopener noreferrer">许可范围</a>。</p>
     </footer>
 
     {navigation.mode === 'catalog-only' ? (
