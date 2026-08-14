@@ -22,7 +22,7 @@ npm run build   # 构建 dist/(postbuild 自动查公式/插图/链接)
 - **大纲**:**5 部分 18 章 66 词条**见 `sections.yaml`,蒸馏自 CTFP 三部分结构。Part 0(记号地基,3 词条)是最小前置;further 章为参考轨,长期 TODO 合法。
 - **语言政策**:**代码 Rust 为主,先跑后写**(rustc 本地真跑,断言贴进词条);Haskell 只在类型类/惰性/HKT 的表达力对照处出场,不超过一屏;**C++ 一律不出现**。
 - **词条格式**:开头定义+定位段(无 TLDR)→ `##` 分节 → 失效模式/反例一节 → `## 练习`(≥2 题,含解答,代码题 Rust、证明题等式推理)→ `## 相关词条`。体裁是长文,不是费曼卡片。
-- **文风**:声口参照 Calculus Made Easy(平坐、祛魅、不升华);CTFP 原书的好比喻保留并注明出处;禁用词表与行文规范见 vault `_README.md` 规则 7。**正文标点用全角**(，：；？),这是 copywriting-lint 的口径。
+- **文风**:声口参照 Calculus Made Easy(平坐、祛魅、不升华);CTFP 原书的好比喻保留并注明出处;禁用词表与行文规范见 vault `_README.md` 规则 8,旁注硬约束(marginnote 不能以行内数学/代码开头等)见规则 7。**正文标点用全角**(，：；？),这是 copywriting-lint 的口径。
 - **术语**:沿承 vault `03 - AREAS/learning/category-theory/` 旧译项目词汇表(composition=组合、恒等态射、终端对象等),全表在 `glossary/glossary.md`,既有决定不重开。
 - **插图**:交换图手绘 SVG 存 vault `svg/<slug>.<n>.svg`,paper-ink-v1 明暗契约(`docs/authoring/svg-theme.md`);自定义颜色走 `svg-special-{text,graphic,fill,background}-<name>` 命名空间。旧译的 webp 位图不搬,一律重绘。
 - **旧材料**:CTFP 前 7 章译文在 vault `03 - AREAS/learning/category-theory/`,作参考底稿;该目录 README 的词汇表已迁入本项目。
