@@ -25,7 +25,7 @@ $$
 h \circ (g \circ f) = (h \circ g) \circ f
 $$
 
-第二，**每个对象自带一条恒等箭头**。对象 $A$ 上的 $\mathbf{id}_A : A \to A$ 在组合中什么都不做：
+第二，**每个对象自带一条恒等态射**。对象 $A$ 上的 $\mathbf{id}_A : A \to A$ 在组合中什么都不做：
 
 $$
 f \circ \mathbf{id}_A = f, \qquad \mathbf{id}_B \circ f = f

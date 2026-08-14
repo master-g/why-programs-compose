@@ -62,6 +62,11 @@ export function lintChineseCopywriting(text) {
 	// 围栏代码块最先遮蔽:代码不是文案(algebrica 原版无此条——原文语料不含代码)。
 	const blanked = lintableText
 		.replace(/^`{3,}[\s\S]*?^`{3,}[ \t]*$/gm, (m) => m.replace(/[^\r\n]/g, " "))
+		// 行内代码同样不是文案(_README 规则 8:代码块与行内代码内除外)。
+		// 必须排在围栏之后:围栏已被遮成空格,不会与这条的反引号配对。
+		// 不遮会误报 Rust 记号——`&[1, 1, 2]` 里的逗号判成半角标点,
+		// `&'a T` 的生命周期单引号判成直引号。
+		.replace(/(`+)[^\r\n]*?\1/g, (m) => " ".repeat(m.length))
 		.replace(/\$\$[\s\S]*?\$\$/g, (m) => m.replace(/[^\r\n]/g, " "))
 		.replace(/\$[^$\n]+\$/g, (m) => " ".repeat(m.length))
 		.replace(/https?:\/\/[^\s)]+/g, (m) => " ".repeat(m.length))

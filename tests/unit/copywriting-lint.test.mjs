@@ -98,6 +98,26 @@ describe("lintChineseCopywriting", () => {
 		assert.equal(errors.length, 0);
 	});
 
+	// _README 规则 8:代码块与行内代码内的标点不受全角口径约束。
+	// 遮蔽行内代码之前,Rust 记号会被误判:切片字面量里的逗号报「半角标点」,
+	// 生命周期的 'a 报「建议改用「」引号」。
+	it("does not lint punctuation inside inline code", () => {
+		const input =
+			"传入 `&[1, 1, 2]` 时它给出 3，约束 `for<'a> Fn(&'a str)` 写在尖括号里也成立。";
+		const { text, reports, errors } = lintChineseCopywriting(input);
+		assert.equal(text, input);
+		assert.ok(
+			!reports.some((r) => /半角标点|建议改用|全角数字/.test(r.message)),
+		);
+		assert.equal(errors.length, 0);
+	});
+
+	it("still lints prose punctuation on a line that also has inline code", () => {
+		const input = "调用 `len()` 之后, 结果是 3。";
+		const { reports } = lintChineseCopywriting(input);
+		assert.ok(reports.some((r) => /半角标点/.test(r.message)));
+	});
+
 	it("treats escaped dollar signs as text, not math", () => {
 		const input = "\\$1,500，另一半高于 \\$1,500";
 		const { text, reports } = lintChineseCopywriting(input);

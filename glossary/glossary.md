@@ -14,6 +14,13 @@ title: 词汇表:术语译法与约定
 | object | 对象 | 译 | [category](../categories/category/) |
 | morphism | 态射 | 译;与「箭头」混用,跟随语境 | [category](../categories/category/) |
 | arrow | 箭头 | 译;与「态射」同义 | [category](../categories/category/) |
+| domain | 定义域 | 译;不用「域」单称 | sets-and-functions |
+| codomain | 陪域 | 译;与「像」区分,不用「值域」 | sets-and-functions |
+| total function | 全函数 | 译;定义域上处处有定义 | sets-and-functions |
+| partial function | 部分函数 | 译;不用「偏函数」 | sets-and-functions |
+| injective | 单射 | 译;**不用「一对一」** | sets-and-functions |
+| surjective | 满射 | 译;**不用「映上」** | sets-and-functions |
+| bijective | 双射 | 译 | sets-and-functions |
 | composition | 组合 | 译「组合」,**不用「复合」**(沿承旧译决定);「复合类型」(compound type)是另一概念,不受此约束 | [category](../categories/category/) |
 | associativity | 结合律 | 译 | [category](../categories/category/) |
 | identity morphism | 恒等态射 | 译;**不用「恒等箭头」「单位箭头」** | [category](../categories/category/) |
@@ -30,6 +37,22 @@ title: 词汇表:术语译法与约定
 | extensional equality | 外延相等 | 译 | [category](../categories/category/) |
 | Kleisli category | Kleisli 范畴 | 人名保留英文 | writer-category |
 | embellished function | 装饰函数 | 译,首次出现括注英文 | writer-category |
+
+## Rust 记号
+
+| 英文 | 中文 | 约定 | 首现 |
+| --- | --- | --- | --- |
+| monomorphization | 单态化 | 译,首次出现括注英文 | rust-type-system |
+| bound | 约束 | 译,首次出现括注英文;「trait bound」按「trait 约束」读 | rust-type-system |
+| turbofish | turbofish | 保留英文 | rust-type-system |
+| opaque type | 不透明类型 | 译,首次出现括注英文 | rust-type-system |
+| trait object | trait 对象 | 半保留,trait 不译 | rust-type-system |
+| vtable | 虚表 | 译,首次出现括注英文 | rust-type-system |
+| fat pointer | 胖指针 | 译,首次出现括注英文 | rust-type-system |
+| dyn compatibility | dyn 兼容性 | 半保留;rustc 1.97.1 起的措辞,旧称 object safety(对象安全),搜索错误信息时两词都要试 | rust-type-system |
+| associated type | 关联类型 | 译;与 trait 的泛型参数区分 | rust-type-system |
+| higher-ranked trait bound | 高阶生命周期约束 | 译,首次出现括注英文;记号写作 `for<'a>` | rust-type-system |
+| lifetime elision | 生命周期省略 | 译 | rust-type-system |
 
 ## 泛构造与 ADT
 
@@ -57,7 +80,7 @@ title: 词汇表:术语译法与约定
 | endofunctor | 自函子 | 译 | functor |
 | functor laws | 函子法则 | 译 | functor-laws |
 | lift (a function) | 提升 | 译 | functor |
-| image | 像 | 译 | functor |
+| image | 像 | 译;与陪域区分 | sets-and-functions |
 | type constructor | 类型构造器 | 译;不用「构造子」 | functor |
 | data constructor | 数据构造器 | 译 | functor |
 | typeclass | 类型类 | 译 | haskell-notation |
@@ -73,7 +96,7 @@ title: 词汇表:术语译法与约定
 | natural transformation | 自然变换 | 译 | natural-transformation |
 | naturality | 自然性 | 译 | naturality |
 | parametricity | 参数性 | 译 | parametricity |
-| polymorphism | 多态 | 译 | rust-type-system |
+| polymorphism | 多态 | 译;parametric polymorphism 译「参数多态」 | rust-type-system |
 | exponential object | 指数对象 | 译 | exponential |
 | cartesian closed category | 笛卡尔闭范畴 | 译 | cartesian-closed |
 | Curry-Howard isomorphism | Curry-Howard 同构 | 人名保留英文 | curry-howard |

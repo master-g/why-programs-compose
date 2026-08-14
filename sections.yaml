@@ -8,7 +8,7 @@ parts:
     name_en: "Notation Foundations"
     order: 0
     description_zh: |
-      读懂本库所需的最小前置:集合与函数的记号、Haskell 类型签名速读、Rust 泛型与 trait 速查。每条独立成篇,主线词条直接引用,不重复讲。
+      读懂本库所需的最小前置:集合与函数的记号、Haskell 记号速读、Rust 泛型与 trait 速查。每条独立成篇,主线词条直接引用,不重复讲。
   - id: categories
     name_zh: 范畴基础
     name_en: "Categories"
@@ -35,9 +35,6 @@ parts:
       伴随、单子与 F-代数:副作用如何被组合驯服,折叠为何是普适的,以及通往更深处的几扇门。
 
 known_absent:
-  - sets-and-functions
-  - haskell-notation
-  - rust-type-system
   - types-as-sets
   - void-unit-bool
   - pure-functions
