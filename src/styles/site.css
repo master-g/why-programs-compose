@@ -1346,6 +1346,17 @@ html[data-theme="black"] .theme-toggle__icon--sun {
   font: 400 12px/1.65 var(--font-mono);
 }
 
+/* shiki 双主题:span 行内带浅色 color 与 --shiki-dark 变量(shiki-theme.mjs),
+   暗色主题在这里激活。!important 用于压过 shiki 的行内 style,别无他法。 */
+html[data-theme="black"] pre.astro-code,
+html[data-theme="black"] pre.astro-code span {
+  color: var(--shiki-dark, inherit) !important;
+  background-color: var(--shiki-dark-bg, transparent) !important;
+  font-style: var(--shiki-dark-font-style, inherit) !important;
+  font-weight: var(--shiki-dark-font-weight, inherit) !important;
+  text-decoration: var(--shiki-dark-text-decoration, none) !important;
+}
+
 .article-content p > img:only-child {
   display: block;
   max-width: 100%;

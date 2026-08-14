@@ -8,6 +8,7 @@ import rehypeSectionizeAlgebrica from "../plugins/rehype-sectionize-algebrica.mj
 import rehypeSidenotes from "../plugins/rehype-sidenotes.mjs";
 import rehypeTufteBlocks from "../plugins/rehype-tufte-blocks.mjs";
 import { BASE } from "./base.mjs";
+import { shikiConfig } from "./shiki-theme.mjs";
 
 /**
  * MathJax、旁注、代码高亮与文章分节共用的 sanitize schema。
@@ -175,6 +176,9 @@ export function createArticleMarkdownPipeline({
 	base = BASE,
 } = {}) {
 	return {
+		// 双主题代码高亮与 astro.config 共用唯一事实源,
+		// 让 _render-page(glossary/learn/playground)与词条页配色一致。
+		shikiConfig,
 		remarkPlugins: [remarkMath],
 		rehypePlugins: [
 			rehypeMathjax,

@@ -12,6 +12,8 @@
 
 ## 失败尝试
 
+- **shiki 单主题 + 行内样式压样式表**:上游只配了浅色 min-light 重映射,`background-color:#ffffff` 行内样式压过 `.article-section pre` 的 --note 底色,暗色主题下白底浅色 token 全盘失效;且 _render-page 入口(glossary/learn/playground)根本没接 shikiConfig,吃 shiki 默认主题。修复:`src/lib/shiki-theme.mjs` 双主题唯一事实源(paper-ink-light/dark),shikiConfig 放进 createArticleMarkdownPipeline 供两个入口共用,site.css 用 `html[data-theme="black"]` + `--shiki-dark` 变量激活暗色(!important 压行内样式)。WML 因 Part 0 不写代码未暴露此问题。
+
 - **marginnote 正文不能以 $math$/行内代码开头**:rehype-sidenotes 要求标签行换行后的首个文本节点非空,math 开头会抛「必须包含标签和单段正文」。更危险的是 glob-loader 把该异常吞成 [ERROR] 日志,dev/build 都产出空正文页面并静默通过全部 postbuild 门禁——已加 tests/unit/content-render.test.mjs 渲染冒烟堵住。
 
 - `node --test tests/unit/` 不展开 glob,要用 `npm test`(pattern 'tests/**/*.test.mjs')。
