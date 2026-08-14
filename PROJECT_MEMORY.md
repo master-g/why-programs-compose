@@ -10,6 +10,8 @@
 - SVG 契约:自定义颜色类必须走 `svg-special-{text,graphic,fill,background}-<name>` 命名空间;标准 coral 角色只有 -text 与 -stroke,fill 用 special。
 - 首词条 category(范畴)已毕业:sync 零告警,Rust 代码 rustc 真跑通过。
 - 2026-08-14 categories 章四篇全毕业(440d316):what-is-composition、category、identity-morphism、composition-in-rust。known_absent 从 66 降到 63。三篇的 Rust 代码经 rustc 1.97.1 真跑,编译错误信息(E0525/E0382/E0284/E0373/E0308)原样贴进词条。
+- 2026-08-14 记号地基章三篇全毕业(d4292f7):sets-and-functions、haskell-notation、rust-type-system。known_absent 从 63 降到 60,notation 章与 categories 章均已整章毕业。三篇正文各 210-245 行,代码占比高(rust-type-system 652 行代码/29 块),原因是「每个代码块自包含可运行」这条规则必然带来样板重复,不是内容超范围。
+- **本机没有任何 Haskell 工具链**(ghc/runghc/stack/cabal 全无)。haskell-notation 按用户决定照写,正文第 14 行声明片段未运行,签名逐条对照 GHC base 4.22.0.0 官方文档核对。后续涉及 Haskell 对照的词条(functor、monad、typeclass)沿用这个口径;要改成真跑需先装 GHC。
 - **写词条时两条硬约束是踩出来的**:(1) 正文行内代码不能含 `::`,copywriting-lint 判为「标点重复使用」——写 `str::len` 会报 LINT,改成描述性说法或放进代码块;(2) 旁注(marginnote)内不能有任何行内代码,含 trait 名也不行,直接 SIDENOTE-ERROR 阻断 sync,把 Fn/FnMut/FnOnce 写成不带反引号的普通文本即可。
 - 2026-08-14 本仓库已参数化为 topic 模板(2febcbd,GitHub `is_template=true`):身份唯一事实源 `src/lib/site.config.mjs`(repo/owner/brandZh/taglineZh/contentLicense 五个字段),BASE、仓库链接、主题存储键、vault 目录与 env 名全部派生;每 topic 必改的短文案在 `src/lib/site-copy.mjs`;换 topic 步骤见 `docs/runbooks/new-topic.md`。已实测:改这 5 个字段 + build,title/BASE/品牌/tagline/主题键/仓库链接/许可全站跟随,唯一残留是词条 frontmatter 的 tag(随 content-zh 一起重建,非缺陷)。**新 topic 从本仓库 Use this template,不要再 fork why-models-learn**(其硬编码 17/56/21 计数与「主线不容 known_absent」未修)。
 - WML → WPC 的 fork 成本实测:身份串约 50 处 / 12 文件、领域文案约 15 处 / 3 页面、通用性缺陷 5 处(已在 WPC 修完)、测试夹具 3 文件;site.css 2495 行与整条管线零改动。
@@ -22,6 +24,8 @@
 - **marginnote 正文不能以 $math$/行内代码开头**:rehype-sidenotes 要求标签行换行后的首个文本节点非空,math 开头会抛「必须包含标签和单段正文」。更危险的是 glob-loader 把该异常吞成 [ERROR] 日志,dev/build 都产出空正文页面并静默通过全部 postbuild 门禁——已加 tests/unit/content-render.test.mjs 渲染冒烟堵住。
 
 - `node --test tests/unit/` 不展开 glob,要用 `npm test`(pattern 'tests/**/*.test.mjs')。
+
+- **多 agent 审查推翻了 rust-type-system 的三处错误断言**(单靠写作 agent 的自检发现不了):(1) 高阶生命周期约束 `for<'a> Fn(&'a str) -> usize` 在尖括号里也写得下,不是只能进 where——真正只能进 where 的判据是「约束左边不是所声明的类型参数本身」,如 `for<'a> &'a T: IntoIterator`;(2) 返回位 impl Trait 的 `+ 'a` 在 edition 2024 已不需要,E0700 只在 2015/2021 报;(3) 两个分支返回不同闭包类型必须 `Box<dyn Fn>`,写 impl Trait 报 E0308。**审查 agent 被要求「必须自己重跑代码,不许靠读代码判断」,这条要求是这三个 blocker 被抓到的直接原因。**
 
 - **写 composition-in-rust 时两个「以为会失败」的假设被实测推翻**:(1) 以为 compose 组合不了「返回借用自输入的引用」的函数(如 first_word 与 trim_dot),实测能编译并输出正确结果——单态化时 A、B 各自取到具体生命周期即可,代价是结果不再对任意生命周期多态;(2) 以为两个闭包都不标注参数类型就推断不出,实测有下游调用点时能推断,只有结果完全不使用才报 E0284。**词条里的每条限制都必须先跑一遍再写**,凭 Rust 经验推断会写出错误断言。
 
@@ -40,6 +44,8 @@
 
 ## 上次会话(2026-08-14)
 
+- 用 Workflow 编排写完记号地基三篇(15 个 agent,零错误):每篇走 验证代码 → 写作 → 双 lens 审查(合规 + 技术正确性)→ 修订。主会话独立复验:提取 36 个可运行块在 edition 2015/2021 双档编译(35 通过,1 个是词条里故意展示 E0308 的块),逐个核对运行输出与词条所写一致,并单独验证 overflow-checks 的两条断言。
+- 修 copywriting-lint 遮蔽行内代码(根因):`_README` 规则 8 写明行内代码内除外,但实现只遮围栏块,Rust 记号里的逗号与生命周期单引号被误报。补两条测试。
 - 写词条:categories 章毕业三篇(what-is-composition、identity-morphism、composition-in-rust),代码全部 rustc 真跑,sync 零告警,测试 156 全绿,build 27 页 410 内部引用。
 - 模板化:量化 WML→WPC 的 fork 成本后做参数化(档 2 方案),新增 site.config.mjs / site-copy.mjs / new-topic.md,BaseLayout 统一 title 后缀(消 6 处重复),测试常量改派生并加「身份字面量不得进 src/scripts/tests」守卫(156 项全绿),仓库设为 GitHub template。
 - 发布上线:本地跑通 check:public-history / npm test(155 通过)/ npm run build(24 页,postbuild 全绿)/ check:public-release(94 个追踪文件),`gh repo create` 建 public 仓库,SSH 推送 main,启用 Pages(workflow 构建源),Actions build+deploy 全绿,线上三个入口页 200。
@@ -48,7 +54,7 @@
 ## 下次运行
 
 - **交接就绪(2026-08-14 审计)**:CLAUDE.md、README、vault `_README.md` 三份文档已对齐,踩过的坑(全角标点、marginnote 硬约束、插图位置判断)全部落入 `_README.md` 规则 6–8;写作 agent 从 vault `_README.md` 入手即可,无需读本文件历史。
-- 下一批词条:记号前置三篇(sets-and-functions、haskell-notation、rust-type-system),它们是 learning-paths 的 core 层;之后进 types-and-functions 章(types-as-sets、void-unit-bool、pure-functions)。已毕业词条里有 6 处指向 types-as-sets、monoid、functor、isomorphism、universal-construction 的链接在等它们。
+- 下一批词条:types-and-functions 章(types-as-sets、void-unit-bool、pure-functions)。types-as-sets 被前面四篇反复指向(所有权在集合模型里没有对应物、泛型算什么、发散函数算什么),欠账最多。之后是 small-categories 章的 monoid 与 free-category。
 - Part I 词条有旧译底稿(vault `03 - AREAS/learning/category-theory/`,★ 对照表见其 README),蒸馏不翻译。
 - 开第 3、第 4 个 topic 后再评估要不要剥独立模板仓库(档 3):现在只有 2 个实例,三仓库同步的回流成本大于收益。
 - deploy.yml 的 actions/checkout@v4、configure-pages@v5、setup-node@v4、upload-artifact@v4 触发 Node.js 20 弃用告警(runner 已强制跑 Node 24,当前不阻塞);升 v5 系列时一并处理。
