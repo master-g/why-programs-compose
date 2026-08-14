@@ -98,7 +98,8 @@ summary {
 }
 
 .site-header__inner {
-  width: min(1180px, calc(100% - 48px));
+  /* 与正文容器(1080px)同一公式对齐,而非纸面卡片(1180px)边缘 */
+  width: min(1080px, calc(100% - 96px));
   min-height: 60px;
   margin: 0 auto;
   display: flex;
@@ -2032,7 +2033,7 @@ html[data-theme="black"] pre.astro-code span {
 
   .site-header__inner {
     min-height: 64px;
-    padding: 0 18px;
+    padding: 0 20px;
   }
 
   .site-brand__name {

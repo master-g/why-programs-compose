@@ -13,8 +13,7 @@ tags: ["why-programs-compose"]
 
 范畴论者把这件事抽干净：不谈函数体，不谈类型的内部，只留下「对象」「箭头」和「拼接」三个词。箭头也叫*态射(morphism)*——本库两个词混用，跟随语境挑顺口的那个。
 
-> [!marginfigure] 组合三角形
-> ![f 从 A 到 B,g 从 B 到 C，组合 g∘f 从 A 直达 C](/assets/categories/svg/category.1.svg)
+![f 从 A 到 B，g 从 B 到 C，组合 g∘f 从 A 直达 C](/assets/categories/svg/category.1.svg)
 
 ## 定义：两条公理
 
