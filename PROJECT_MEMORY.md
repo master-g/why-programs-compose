@@ -23,6 +23,7 @@
 
 - 2026-08-14 本页大纲上线(8316367):src/components/ArticleOutline.astro,数据取 `render(entry)` 的 headings(只取 h2,少于 2 个不渲染)。布局几何:容器 1080px 居中,旁注悬挂止于 50%+460px;≥1360px 右栏 fixed 于 `left: calc(50% + 480px)` 宽 200px 与旁注零冲突;1040–1359px 退化为右上角 `<details>` pill;<1040px 隐藏。滚动高亮用「视口 140px 阅读线以上最后一个标题」语义(scroll + rAF,同 VitePress),渐进增强,无 JS 时右栏为纯锚点列表。
 - **内联脚本陷阱**:组件 DOM 在正文之前,`<script is:inline>` 同步执行时 h2 尚未解析,`getElementById` 全空导致静默 return——必须等 DOMContentLoaded 再 init。首版踩过,dump-dom 验证时发现。
+- 大纲 rail 布局定稿(7b528a7):不用 fixed 而用**流内 sticky**(`height: 0; margin-left: 1020px; top: 96px`)——DOM 位置在 header 之后,初始就落在 article-header 分割线下方(同 VitePress aside),滚动后吸附,分割线不再穿过控件;title 加 34px padding-top 与 article-content 的 border-top 对齐。pill 长标题:标题 span 220px 省略号,`·n/m` 计数独立 span 放省略区外。rail 长标题自然折行,marker 随行高伸展(已用 patch dist 长标题截图验证)。
 - **导语列宽陷阱**(1e924a5):sectionize 只包裹首个 h2 之后的内容,导语 p 是 `.article-content` 直接子元素,无 680px 约束会横穿 1080px 容器并压到宽屏大纲栏——已用 `.article-content > p/blockquote { max-width }` 兜住。同 commit:rail 高亮改为滑动 marker(transform/height 过渡,pill 保留左线),h2 加 `scroll-margin-top: 90px`,搜索 kbd 9→12px。
 
 ## 上次会话(2026-08-14)
