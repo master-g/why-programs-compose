@@ -38,9 +38,6 @@ known_absent:
   - sets-and-functions
   - haskell-notation
   - rust-type-system
-  - what-is-composition
-  - identity-morphism
-  - composition-in-rust
   - types-as-sets
   - void-unit-bool
   - pure-functions
