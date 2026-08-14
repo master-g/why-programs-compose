@@ -120,7 +120,7 @@ describe('independent visual contracts', () => {
     assert.match(articleOutline, /article-outline--rail/);
     assert.match(articleOutline, /<details class="article-outline article-outline--pill">/);
     assert.match(articleOutline, /items\.length > 1/, 'single-heading articles must not render an outline');
-    assert.match(siteCss, /@media \(min-width: 1360px\)[\s\S]*?\.article-outline--rail\s*\{[^}]*position: fixed;[^}]*left: calc\(50% \+ 480px\);/);
+    assert.match(siteCss, /@media \(min-width: 1360px\)[\s\S]*?\.article-outline--rail\s*\{[^}]*position: sticky;[^}]*height: 0;[^}]*margin-left: 1020px;/);
     assert.match(siteCss, /@media \(min-width: 1040px\) and \(max-width: 1359\.98px\)[\s\S]*?\.article-outline--pill\s*\{[^}]*position: fixed;/);
     assert.match(siteCss, /\.article-outline\s*\{\s*display: none;/, 'outline must be hidden by default (mobile)');
   });

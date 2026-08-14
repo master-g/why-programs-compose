@@ -2385,14 +2385,21 @@ html[data-theme="black"] pre.astro-code span {
 }
 
 @media (min-width: 1360px) {
+  /* 流内 sticky:初始位置在 article-header 分割线之下(同 VitePress aside),
+     滚动后吸附。height: 0 让它不占正文流;内容向下溢出到旁注列右侧。 */
   .article-outline--rail {
     display: block;
-    position: fixed;
-    top: 128px;
-    left: calc(50% + 480px);
+    position: sticky;
+    top: 96px;
+    z-index: 5;
+    height: 0;
+    margin-left: 1020px;
     width: 200px;
-    max-height: calc(100vh - 190px);
-    overflow-y: auto;
+  }
+
+  .article-outline--rail .article-outline__title {
+    /* 与 article-content 的 34px padding-top 对齐,避开其 border-top */
+    padding-top: 34px;
   }
 
   .article-outline--rail ol {
@@ -2423,6 +2430,16 @@ html[data-theme="black"] pre.astro-code span {
 
   .article-outline--pill summary::-webkit-details-marker {
     display: none;
+  }
+
+  /* 长标题截断在正文名上;·n/m 计数留在省略区外,始终可见 */
+  .article-outline--pill summary [data-outline-current] {
+    display: inline-block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
   }
 
   .article-outline--pill summary::after {
