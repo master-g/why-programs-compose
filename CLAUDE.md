@@ -64,7 +64,7 @@ npm run build   # 构建 dist/(postbuild 自动查公式/插图/链接)
 ## 审查规则
 
 - 词条验收:概念讲透 + 失效模式一节 + `## 练习` 含解答且代码真跑过 + 结尾 `## 相关词条`
-- 自动闸:`npm run sync` 跑 copywriting-lint(LINT 警告回 vault 修;LINT-ERROR/SIDENOTE-ERROR/LAYOUT-ERROR/SVG 契约错误 = sync exit 1 不写产物);`npm run build` postbuild 查 `mjx-error`、插图 404、全站内部引用与 SVG 主题
+- 自动闸:`npm run sync` 跑 copywriting-lint(LINT 警告回 vault 修;LINT-ERROR/SIDENOTE-ERROR/LAYOUT-ERROR/SVG 契约错误 = sync exit 1 不写产物);`npm run build` postbuild 查 `mjx-error`、字形悬空引用、插图 404、全站内部引用、SVG 主题、页面产物契约(每页一个 `<title>` 且品牌名只出现一次、一个 `<h1>`)与构建体积(`scripts/check-build-size.mjs`,阈值只抓事故,撞线先重估阈值)
 - `npm test` 必须全绿;视觉契约约束 BaseLayout/index/[slug] 结构,改页面时同步改测试
 - sections.yaml 的 slug 与 vault 文件名一一对应;新词条先进 sections.yaml + known_absent
 - 提交信息:`type(scope): 中文描述`,直接提交 main

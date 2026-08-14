@@ -6,6 +6,10 @@ const entries = defineCollection({
   loader: glob({
     base: './content-zh',
     pattern: ['*/*.md'],
+    // 渲染产物不进 content store:词条内联的 MathJax SVG 会把
+    // .astro/data-store.json 撑到百 MB 量级,全量重建时一次 JSON.stringify 触发 OOM。
+    // 改由页面按需渲染,代价是渲染移到页面阶段、冷构建变慢。
+    deferRender: true,
   }),
   schema: z.object({
     title: z.string(),

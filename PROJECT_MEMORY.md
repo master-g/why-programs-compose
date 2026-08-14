@@ -15,6 +15,9 @@
 - **写词条时两条硬约束是踩出来的**:(1) 正文行内代码不能含 `::`,copywriting-lint 判为「标点重复使用」——写 `str::len` 会报 LINT,改成描述性说法或放进代码块;(2) 旁注(marginnote)内不能有任何行内代码,含 trait 名也不行,直接 SIDENOTE-ERROR 阻断 sync,把 Fn/FnMut/FnOnce 写成不带反引号的普通文本即可。
 - 2026-08-14 本仓库已参数化为 topic 模板(2febcbd,GitHub `is_template=true`):身份唯一事实源 `src/lib/site.config.mjs`(repo/owner/brandZh/taglineZh/contentLicense 五个字段),BASE、仓库链接、主题存储键、vault 目录与 env 名全部派生;每 topic 必改的短文案在 `src/lib/site-copy.mjs`;换 topic 步骤见 `docs/runbooks/new-topic.md`。已实测:改这 5 个字段 + build,title/BASE/品牌/tagline/主题键/仓库链接/许可全站跟随,唯一残留是词条 frontmatter 的 tag(随 content-zh 一起重建,非缺陷)。**新 topic 从本仓库 Use this template,不要再 fork why-models-learn**(其硬编码 17/56/21 计数与「主线不容 known_absent」未修)。
 - WML → WPC 的 fork 成本实测:身份串约 50 处 / 12 文件、领域文案约 15 处 / 3 页面、通用性缺陷 5 处(已在 WPC 修完)、测试夹具 3 文件;site.css 2495 行与整条管线零改动。
+- 2026-08-14 从上游 why-models-learn 回流四项构建优化(其 7d427ff/86efe63/7ebd488/6a17b28;555aa0f 的 title 重复缺陷本库已在 e13a859 修过):entries collection `deferRender`、MathJax 字形去重、体积闸与页面产物契约、astro 7.1.3 → 7.2.2。本库实测:内容存储 283 → 46 KB/词条,单页最大 440 → 293 KB,sets-and-functions 单页 `<path>` 349 → 48,`<use>` 数量前后均为 427(引用未丢),dist 1.8 → 1.5 MB;166 项测试与五道门禁全绿。
+- 体积闸与上游的两处差异(本库 6 篇、目标 66 篇,规模会涨十倍):内容存储阈值改为按词条数折算(`contentStoreKbPerEntry: 120`,绝对值阈值在 6 篇规模上无论怎么取都抓不到 deferRender 失效),不收 dist 总体积(随词条数线性涨,只会假警报,单页上限已覆盖)。
+- 页面产物契约的品牌名取自 `SITE.brandZh`,不写字面量(上游写死了品牌串,回流时必须改)。
 - 2026-08-14 远程仓库与 Pages 上线:`master-g/why-programs-compose`(public),Pages 构建源为 `build_type=workflow`(gh api POST `/repos/:owner/:repo/pages` 设定),站点 https://master-g.github.io/why-programs-compose/ 三个入口页(/、/learn/、/category/)返回 200。
 
 ## 失败尝试
@@ -44,6 +47,7 @@
 
 ## 上次会话(2026-08-14)
 
+- 回流上游四项构建优化(详见「已验证的事实」)。`check-mjx-errors.mjs` 的扫盘逻辑收进 `main()` 并加直接执行守卫,否则单测 import `danglingGlyphRefs` 会连带扫一遍 dist(上游未收)。对照实验用「注释掉去重插件重建一次」做的,`<use>` 数量两次一致是引用未丢的判据。
 - 用 Workflow 编排写完记号地基三篇(15 个 agent,零错误):每篇走 验证代码 → 写作 → 双 lens 审查(合规 + 技术正确性)→ 修订。主会话独立复验:提取 36 个可运行块在 edition 2015/2021 双档编译(35 通过,1 个是词条里故意展示 E0308 的块),逐个核对运行输出与词条所写一致,并单独验证 overflow-checks 的两条断言。
 - 修 copywriting-lint 遮蔽行内代码(根因):`_README` 规则 8 写明行内代码内除外,但实现只遮围栏块,Rust 记号里的逗号与生命周期单引号被误报。补两条测试。
 - 写词条:categories 章毕业三篇(what-is-composition、identity-morphism、composition-in-rust),代码全部 rustc 真跑,sync 零告警,测试 156 全绿,build 27 页 410 内部引用。

@@ -7,8 +7,8 @@ CC BY-SA 4.0 均不覆盖这些项目。
 
 | 项目 | 当前版本 | 许可证 | 来源 |
 | --- | --- | --- | --- |
-| `@astrojs/markdown-remark` | 7.2.1 | MIT | https://github.com/withastro/astro |
-| `astro` | 7.1.3 | MIT | https://github.com/withastro/astro |
+| `@astrojs/markdown-remark` | 7.2.2 | MIT | https://github.com/withastro/astro |
+| `astro` | 7.2.2 | MIT | https://github.com/withastro/astro |
 | `js-yaml` | 4.3.0 | MIT | https://github.com/nodeca/js-yaml |
 | `katex` | 0.16.47 | MIT；所含字体另按其许可证 | https://github.com/KaTeX/KaTeX |
 | `mathjax-full` | 3.2.1 | Apache-2.0 | https://github.com/mathjax/MathJax-src |

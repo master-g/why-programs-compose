@@ -1,6 +1,7 @@
 import remarkMath from "remark-math";
 import rehypeMathjax from "rehype-mathjax/svg";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import rehypeDedupeMathGlyphs from "../plugins/rehype-dedupe-math-glyphs.mjs";
 import rehypeMarkStandaloneMath from "../plugins/rehype-mark-standalone-math.mjs";
 import rehypePrefixBase from "../plugins/rehype-prefix-base.mjs";
 import rehypeRewriteAlgebrica from "../plugins/rehype-rewrite-algebrica.mjs";
@@ -182,6 +183,8 @@ export function createArticleMarkdownPipeline({
 		remarkPlugins: [remarkMath],
 		rehypePlugins: [
 			rehypeMathjax,
+			// 紧跟 mathjax:后面的插件只搬运节点,不改字形路径。
+			rehypeDedupeMathGlyphs,
 			rehypeMarkStandaloneMath,
 			rehypeSidenotes,
 			rehypeTufteBlocks,

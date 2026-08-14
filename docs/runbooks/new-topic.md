@@ -110,12 +110,15 @@ find public/assets -mindepth 1 -maxdepth 1 -type d ! -name playground -exec rm -
   键不带仓库名会让不同 topic 的明暗设置互相覆盖。已由 `THEME_STORAGE_KEY` 派生保证。
 - **代码块语言要先在 shiki 里可用。** 新 topic 换语言(wgsl、asm 等)时确认高亮生效,
   双主题配置在 `src/lib/shiki-theme.mjs`。
+- **体积闸阈值按当前 topic 的实测值取。** `scripts/check-build-size.mjs` 的 `LIMITS`
+  记录的是本库的量级(单页 293 KB、单页字形 89 个、内容存储 46 KB/词条)。
+  公式密度差别大的 topic 首次构建后重估一遍,阈值取实测值的数倍。
 
 ## 七、验证并发布
 
 ```bash
-npm test                      # 155 项,必须全绿
-npm run build                 # 含 postbuild:公式、插图、SVG 主题、全站内部引用
+npm test                      # 166 项,必须全绿
+npm run build                 # 含 postbuild:公式、插图、SVG 主题、内部引用、页面契约、体积闸
 npm run check:public-release   # 发布边界
 ```
 

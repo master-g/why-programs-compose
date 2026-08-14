@@ -3,6 +3,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BASE } from '../src/lib/base.mjs';
+import { SITE } from '../src/lib/site.config.mjs';
 
 const FORBIDDEN_RUNTIME = [
   { label: 'googletagmanager.com', pattern: /googletagmanager\.com/i },
@@ -12,6 +13,38 @@ const FORBIDDEN_RUNTIME = [
   { label: 'wp-content/themes', pattern: /wp-content\/themes/i },
   { label: '/theme/', pattern: /\/theme\//i },
 ];
+
+/**
+ * 页面产物契约。
+ *
+ * 这里查的是渲染**结果**,与 visual-contracts 查源码互补。上游 why-models-learn
+ * 的实例:品牌后缀统一收进 BaseLayout 后,[slug].astro 的 pageTitle 仍自带一份,
+ * 词条页 title 出现两次品牌名;当时全部单元测试与门禁通过,只有逐字节比对 dist
+ * 才发现。源码断言看不见这类拼接结果。
+ */
+export function pageContractProblems(html, brand = SITE.brandZh) {
+  // 只约束完整文档。片段 HTML(测试 fixture、将来可能出现的局部产物)没有
+  // <html> 外壳,对它们要求 title 与 h1 是错的;Astro 的页面产物一律有外壳。
+  if (!/<html[\s>]/i.test(html)) return [];
+
+  const problems = [];
+
+  const titles = html.match(/<title[^>]*>([\s\S]*?)<\/title>/g) || [];
+  if (titles.length !== 1) {
+    problems.push(`应有且仅有一个 <title>,实际 ${titles.length} 个`);
+  } else {
+    const text = titles[0].replace(/<\/?title[^>]*>/g, '').trim();
+    if (!text) problems.push('<title> 为空');
+    const brandCount = text.split(brand).length - 1;
+    if (brandCount === 0) problems.push(`<title> 缺少品牌名: ${text}`);
+    if (brandCount > 1) problems.push(`<title> 品牌名重复 ${brandCount} 次: ${text}`);
+  }
+
+  const h1 = html.match(/<h1[\s>]/g) || [];
+  if (h1.length !== 1) problems.push(`应有且仅有一个 <h1>,实际 ${h1.length} 个`);
+
+  return problems;
+}
 
 function normalizeSiteBase(value) {
   const raw = String(value || '').trim();
@@ -89,6 +122,9 @@ export function checkStaticSite({ distDir = 'dist', siteBase = BASE } = {}) {
     const fileLabel = relative(root, file);
     for (const { label, pattern } of FORBIDDEN_RUNTIME) {
       if (pattern.test(text)) errors.push(`${fileLabel} contains forbidden runtime reference: ${label}`);
+    }
+    if (extname(file) === '.html') {
+      for (const problem of pageContractProblems(text)) errors.push(`${fileLabel}: ${problem}`);
     }
     const references = extname(file) === '.css'
       ? referencesFromCss(text)
