@@ -23,7 +23,7 @@ function groupBySection(items) {
 }
 
 function sectionName(sectionId) {
-  if (sectionId === 'math-core') return '五组最小数学前置';
+  if (sectionId === 'math-core') return learning.math.layers.core?.name_zh || '最小记号前置';
   return learning.sections.get(sectionId)?.name_zh || sectionId;
 }
 
@@ -44,10 +44,10 @@ const reference = learning.math.layers.reference;
 
     <header class="learning-path-header">
       <span class="page-kicker">第一遍主线 · 无状态入口</span>
-      <h1>先看到模型学习，再回补需要的数学。</h1>
-      <p>这条路径把 94 篇数学内容分成 17 篇最小前置、56 篇按需回补和 21 篇进阶参考。你可以沿主线继续，不需要先完成全部数学地基。</p>
+      <h1>先看到组合，再回补需要的记号。</h1>
+      <p>这条路径按 CTFP 的教学顺序走完范畴论主干。记号前置只有 {core.entries.length} 篇速查，读到能认出记号即可；你可以沿主线继续，不需要先精通 Haskell 或类型理论。</p>
       <blockquote class="epigraph">
-        <p>先让学习闭环出现，再为当前问题补上必要的推导。</p>
+        <p>先让「组合」的直觉出现，再为当前概念补上必要的形式化。</p>
         <footer>——本项目学习路径说明</footer>
       </blockquote>
     </header>
@@ -59,7 +59,7 @@ const reference = learning.math.layers.reference;
       </div>
       <ol>
         <li><strong>现在读</strong><span>沿第一遍主线推进。</span></li>
-        <li><strong>遇到推导困难时回补</strong><span>只打开当前模型真正引用的数学。</span></li>
+        <li><strong>遇到推导困难时回补</strong><span>只打开当前词条真正引用的记号。</span></li>
         <li><strong>按兴趣参考</strong><span>在完成主线后继续理论轨。</span></li>
       </ol>
     </section>
@@ -84,7 +84,7 @@ const reference = learning.math.layers.reference;
             </div>
           </header>
 
-          {stage.id === 'math-core' ? (
+          {stage.kind === 'core-math' ? (
             <div class="learning-path-math-groups">
               {core.groups.map((group) => (
                 <section class="learning-path-math-group" aria-labelledby={`math-group-${group.id}`}>
@@ -132,17 +132,19 @@ const reference = learning.math.layers.reference;
       ))}
     </section>
 
+    {(backfill.entries.length > 0 || reference.entries.length > 0 || learning.path.optionalBranches.length > 0) && (
     <section class="learning-path-secondary" aria-labelledby="learning-path-secondary-title">
       <header class="learning-path-section-head">
         <div>
           <span class="page-kicker">不计入主线进度</span>
           <h2 id="learning-path-secondary-title">回补与参考</h2>
         </div>
-        <p>这些入口保留完整数学地图，但不会插入主线的前后关系。</p>
+        <p>这些入口保留完整记号地图，但不会插入主线的前后关系。</p>
       </header>
 
+      {backfill.entries.length > 0 && (
       <details class="learning-path-disclosure" open>
-        <summary><span>遇到推导困难时回补 · {backfill.entries.length} 篇</span><small>三个使用场景</small></summary>
+        <summary><span>遇到推导困难时回补 · {backfill.entries.length} 篇</span></summary>
         <div class="learning-path-card-grid">
           {backfill.groups.map((group) => (
             <section class="learning-path-card" aria-labelledby={`backfill-${group.id}`}>
@@ -161,9 +163,11 @@ const reference = learning.math.layers.reference;
           ))}
         </div>
       </details>
+      )}
 
+      {reference.entries.length > 0 && (
       <details class="learning-path-disclosure">
-        <summary><span>按兴趣参考 · {reference.entries.length} 篇</span><small>进阶数学</small></summary>
+        <summary><span>按兴趣参考 · {reference.entries.length} 篇</span><small>进阶记号</small></summary>
         <ol class="learning-path-reference-list">
           {reference.entries.map((item) => (
             <li>
@@ -174,6 +178,7 @@ const reference = learning.math.layers.reference;
           ))}
         </ol>
       </details>
+      )}
 
       {learning.path.optionalBranches.map((branch) => (
         <details class="learning-path-disclosure">
@@ -191,6 +196,7 @@ const reference = learning.math.layers.reference;
         </details>
       ))}
     </section>
+    )}
 
     <footer class="learning-path-footer">
       <a class="button-primary" href={withBase('/category/notation/')}>查看记号地基</a>

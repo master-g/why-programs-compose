@@ -2,7 +2,7 @@
 /**
  * 单向同步:Obsidian vault 飞地 → content-zh/。
  *
- * 事实源:vault 的 `03 - AREAS/learning/why-models-learn/<slug>.md`(feynman 卡片)。
+ * 事实源:vault 的 `03 - AREAS/learning/why-programs-compose/<slug>.md`(feynman 卡片)。
  * 只同步 `status: complete | reference`;`active` 草稿不出 vault。
  *
  * 适配规则(写作无感,脚本负责):
@@ -75,7 +75,7 @@ function writeVaultIndex(statusMap) {
 
 	const MARK = { complete: "✅", reference: "📚", active: "📝" };
 	const lines = [
-		"# why-models-learn 索引",
+		"# why-programs-compose 索引",
 		"",
 		"> 生成物(`npm run sync` 顺带生成),勿手改。✅=已毕业 📝=草稿 ⬜=未写;点 ⬜ 的链接可直接创建笔记。",
 		"",

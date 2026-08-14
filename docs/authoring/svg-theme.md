@@ -6,7 +6,7 @@
 
 只编辑 vault 中的源文件：
 
-`~/Documents/ObsidianVaults/Main/03 - AREAS/learning/why-models-learn/svg/`
+`~/Documents/ObsidianVaults/Main/03 - AREAS/learning/why-programs-compose/svg/`
 
 `content-zh/` 与 `public/assets/` 都是 `npm run sync` 生成的产物。不要手工编辑这两个目录中的插图。
 

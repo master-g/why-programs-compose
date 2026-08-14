@@ -53,7 +53,7 @@ const MATH_GROUPS = [
   {
     layer: 'core',
     actionLabel: '现在读',
-    descriptionZh: '第一遍只读这些词条。目标是掌握定义、数字例子和第一次机器学习用途。',
+    descriptionZh: '第一遍只读这些词条。目标是掌握定义、具体例子和第一次在主线中的用途。',
   },
   {
     layer: 'backfill',

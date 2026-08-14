@@ -105,12 +105,10 @@ describe('independent visual contracts', () => {
     assert.notEqual(learnPage, '', 'learning path page is missing');
     assert.match(learnPage, /class="learning-path-page"/);
     assert.match(learnPage, /class="learning-path-stage"/);
-    assert.match(learnPage, /17/);
-    assert.match(learnPage, /56/);
-    assert.match(learnPage, /21/);
+    assert.match(learnPage, /记号前置/);
     assert.match(learnPage, /遇到推导困难时回补/);
     assert.match(learnPage, /可选支线/);
-    assert.match(learnPage, /进阶参考/);
+    assert.match(learnPage, /按兴趣参考/);
     assert.match(learnPage, /<blockquote class="epigraph"/);
     assert.match(learnPage, /class="newthought"/);
     assert.match(learnPage, /<details/);

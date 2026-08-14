@@ -22,7 +22,7 @@ const sectionDirs = getSections().map((section) => section.dir);
 console.log(`[astro-config] built slug map: ${slugMap.size} articles`);
 
 export default defineConfig({
-	// GitHub Pages 项目页:https://master-g.github.io/why-models-learn/
+	// GitHub Pages 项目页:https://master-g.github.io/why-programs-compose/
 	site: "https://master-g.github.io",
 	base: BASE,
 	compressHTML: true,

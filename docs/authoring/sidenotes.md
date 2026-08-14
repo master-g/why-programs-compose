@@ -6,7 +6,7 @@
 
 只编辑 vault 中的源词条：
 
-`~/Documents/ObsidianVaults/Main/03 - AREAS/learning/why-models-learn/<slug>.md`
+`~/Documents/ObsidianVaults/Main/03 - AREAS/learning/why-programs-compose/<slug>.md`
 
 `content-zh/` 是 `npm run sync` 生成的产物。不要手工编辑生成词条。
 
@@ -15,9 +15,9 @@
 编号旁注使用 Markdown 脚注。引用放在需要精确对应的正文位置，定义使用同一个唯一 ID：
 
 ```markdown
-欧几里得范数来自内积。[^inner-product]
+恒等态射由单位律唯一确定。[^identity-unique]
 
-[^inner-product]: 这条构造得到 2-范数；参见[[inner-products|内积]]与 $p=2$。
+[^identity-unique]: 若 $\mathrm{id}$ 与 $\mathrm{id}'$ 都满足单位律，则 $\mathrm{id} = \mathrm{id} \circ \mathrm{id}' = \mathrm{id}'$；参见[[identity-morphism|恒等态射]]。
 ```
 
 每个 ID 必须恰好有一个引用和一个定义。不要在同一篇词条中重复引用同一个 ID。站点按引用顺序自动编号，作者不要手写编号。
@@ -27,10 +27,10 @@
 无编号边注使用紧跟正文段落的 `marginnote` callout：
 
 ```markdown
-范数下标指定距离规则。
+圆圈记号表示先右后左的组合顺序。
 
 > [!marginnote] 符号提醒
-> 下标表示使用的范数；参见[[norms|范数]]与 $p$。
+> 组合 $g \circ f$ 先作用 $f$ 再作用 $g$；参见[[what-is-composition|组合]]。
 ```
 
 标签不能为空。边注必须紧跟普通正文段落。不要把边注放在标题、列表、表格或代码块之后。
@@ -73,9 +73,9 @@
 适合编号旁注：
 
 ```markdown
-有限维空间中的所有范数给出相同的收敛概念。[^norm-equivalence]
+小范畴的全体对象汇集成一个集合。[^size-issues]
 
-[^norm-equivalence]: 等价常数依赖维数与所比较的范数；这里不讨论无限维空间。
+[^size-issues]: 大范畴（如 $\mathbf{Set}$）的对象是真类；这里不讨论集合论的 size 公理化。
 ```
 
 这条信息限定一句结论，并需要精确往返。
@@ -83,17 +83,17 @@
 适合无编号边注：
 
 ```markdown
-梯度的坐标取决于当前基底。
+函子把一个范畴的结构映进另一个范畴。
 
 > [!marginnote] 第一遍边界
-> 先把梯度理解为最陡上升方向；坐标变换在[[change-of-basis|基变换]]中处理。
+> 先把函子理解为保结构的映射；两条法则的验证在[[functor-laws|函子法则]]中处理。
 ```
 
 这条信息划定第一遍阅读深度，删除后正文定义仍成立。
 
-保持现状：一段正文依次给出随机变量的定义、取值和一个掷骰子例子。三项内容共同构成首次理解，不能因为篇幅较长而把例子移入页边。
+保持现状：一段正文依次给出范畴的定义、两条公理和一个 $\mathbf{Set}$ 范畴例子。三项内容共同构成首次理解，不能因为篇幅较长而把例子移入页边。
 
-错误用法：把损失函数的适用条件、公式和最终结论全部放入一条旁注。正文会在删除旁注后失去论证，因此必须改回正文。
+错误用法：把函子法则的适用条件、公式和最终结论全部放入一条旁注。正文会在删除旁注后失去论证，因此必须改回正文。
 
 ## 与教学布局的边界
 
@@ -118,7 +118,3 @@ npm run build
 ```
 
 再在 `playground` 与新增旁注词条中检查桌面端、移动端、白色主题和黑色主题。确认旁注可见、顺序正确、没有重叠或页面级横向溢出。
-
-逐篇优化时还要在 `docs/qa/tufte-optimization/manifest.yaml` 记录采用决定或保持现状理由。批次证据使用 `docs/qa/tufte-optimization/batch-template.md`。
-
-大纲新增已完成词条后运行 `make tufte-manifest`。该命令保留已有审查记录，只追加新词条；遇到被移除的记录或学习角色变化时停止并要求人工裁决。

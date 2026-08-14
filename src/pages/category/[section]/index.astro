@@ -33,9 +33,9 @@ const title = `${section.name_zh} | 程序为什么能组合`;
       {section.description_zh && <p>{section.description_zh}</p>}
       {pathContext.mathGroups.length > 0 ? (
         <div class="category-path-role">
-          <strong>数学地基</strong>
+          <strong>记号前置</strong>
           <span>第一遍按“现在读”推进</span>
-          <small>“按需回补”和“形式参考”不构成进入机器学习的条件。</small>
+          <small>“按需回补”和“形式参考”不构成进入主线的条件。</small>
         </div>
       ) : (pathContext.mainlineStage || pathContext.optionalBranch) && (
         <div class="category-path-role">
@@ -45,9 +45,9 @@ const title = `${section.name_zh} | 程序为什么能组合`;
         </div>
       )}
       {pathContext.backfillGroups.length > 0 && (
-        <aside class="category-backfill" aria-label="按需数学回补">
+        <aside class="category-backfill" aria-label="按需记号回补">
           <strong>遇到推导困难时回补</strong>
-          <p>以下数学组为当前章节提供推导支撑，不构成进入下一篇的条件。</p>
+          <p>以下记号组为当前章节提供推导支撑，不构成进入下一篇的条件。</p>
           <ul>
             {pathContext.backfillGroups.map((group) => (
               <li>
