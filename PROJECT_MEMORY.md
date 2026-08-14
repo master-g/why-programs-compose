@@ -33,6 +33,7 @@
 
 ## 下次运行
 
+- **交接就绪(2026-08-14 审计)**:CLAUDE.md、README、vault `_README.md` 三份文档已对齐,踩过的坑(全角标点、marginnote 硬约束、插图位置判断)全部落入 `_README.md` 规则 6–8;写作 agent 从 vault `_README.md` 入手即可,无需读本文件历史。
 - 按 first-pass 顺序写词条:sets-and-functions → haskell-notation → rust-type-system → what-is-composition → identity-morphism → composition-in-rust。
 - Part I 词条有旧译底稿(vault `03 - AREAS/learning/category-theory/`,★ 对照表见其 README),蒸馏不翻译。
 - 建 GitHub 仓库 master-g/why-programs-compose 并推送后,Pages 工作流会自动部署。
