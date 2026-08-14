@@ -86,7 +86,7 @@ describe('independent visual contracts', () => {
   it('applies the restrained editorial brand layer to the home page', () => {
     assert.match(
       siteCss,
-      /\.home-hero h1\s*\{[^}]*font:\s*760 clamp\(58px,\s*7\.2vw,\s*88px\)\/1\.03 var\(--font-sans\);[^}]*text-wrap:\s*balance;/s,
+      /\.home-hero h1\s*\{[^}]*font:\s*500 clamp\(56px,\s*7vw,\s*84px\)\/1\.08 var\(--font-serif\);[^}]*text-wrap:\s*balance;/s,
     );
     assert.match(siteCss, /\.home-hero > p\s*\{[^}]*font:\s*400 20px\/1\.85 var\(--font-serif\);[^}]*text-wrap:\s*pretty;/s);
     assert.match(

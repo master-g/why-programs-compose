@@ -475,8 +475,9 @@ html[data-theme="black"] .theme-toggle__icon--sun {
 .home-hero h1 {
   max-width: 840px;
   margin: 20px 0 24px;
-  font: 760 clamp(58px, 7.2vw, 88px)/1.03 var(--font-sans);
-  letter-spacing: -0.055em;
+  /* 与其余页面 h1 同族:serif 500(article-title/category/learn 均为此) */
+  font: 500 clamp(56px, 7vw, 84px)/1.08 var(--font-serif);
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
