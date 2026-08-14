@@ -19,6 +19,8 @@
 - `node --test tests/unit/` 不展开 glob,要用 `npm test`(pattern 'tests/**/*.test.mjs')。
 - 词条初稿按 vault 半角标点风格写,与站点全角口径冲突,返工一轮;新词条直接写全角。
 
+- 2026-08-14 去 WML 化完成(2913760):主页 hero、about、learn、category 页、article-navigation 文案、docs/authoring 三篇路径与示例、sync 脚本索引标题、astro.config 注释全部改为 WPC;learn.astro 的 `stage.id === 'math-core'` 改为 `stage.kind === 'core-math'`(否则记号前置阶段走不进 math-groups 渲染分支);空的 backfill/reference/支线区块加条件隐藏;visual-contracts 里 WML 硬编码 17/56/21 断言改为通用断言。保留:README/CLAUDE/LICENSES 的 fork 归属声明、测试夹具内的合成范数示例。
+
 ## 上次会话(2026-08-14)
 
 - 完成 repo 脚手架、sections.yaml、learning-paths.yaml、glossary(迁自旧译词汇表)、CLAUDE/README/LICENSE、内容耦合测试改写(learning-paths、article-navigation、render-page-structure 夹具、删 3 个 WML 试点测试)、playground 链接替换、首词条 category + SVG。
