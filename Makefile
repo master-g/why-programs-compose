@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help sync dev build test preview check-search check-licenses check-public-release check-public-history tufte-manifest install
+.PHONY: help sync dev build test preview check-search check-licenses check-public-release check-public-history install
 
 help: ## 列出全部命令
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  make %-14s %s\n", $$1, $$2}'
@@ -35,5 +35,3 @@ check-public-release: ## 检查当前文件树与构建产物的公开发布边�
 check-public-history: ## 检查全部可达 Git 历史中的禁止路径
 	npm run check:public-history
 
-tufte-manifest: ## 从大纲更新 Tufte 台账并保留审查记录
-	npm run update:tufte-manifest

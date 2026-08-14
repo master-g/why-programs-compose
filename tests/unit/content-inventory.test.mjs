@@ -63,9 +63,7 @@ describe('content inventory', () => {
     assert.deepEqual(missing, [...knownAbsent].sort());
   });
 
-  it('enforces article structure and the Part 0 no-code rule', () => {
-    const bySlug = new Map(entryInventory().map((entry) => [entry.slug, entry]));
-
+  it('enforces article structure and the exercise rule', () => {
     for (const path of markdownFiles(CONTENT_ROOT)) {
       const slug = path.slice(path.lastIndexOf('/') + 1, -3);
       const source = readFileSync(path, 'utf8');
@@ -74,13 +72,9 @@ describe('content inventory', () => {
       const frontmatter = source.match(/^---\n([\s\S]*?)\n---\n/)?.[1] ?? '';
       assert.match(frontmatter, /^title:\s*.+$/m, `${slug}: missing title frontmatter`);
       assert.equal(headings.at(-1), '相关词条', `${slug}: final h2 must be 相关词条`);
-
-      if (/^```/m.test(source)) {
-        assert.equal(headings.includes('运行方法'), true, `${slug}: code article must contain ## 运行方法`);
-      }
-      if (bySlug.get(slug)?.part === 'math-foundations') {
-        assert.doesNotMatch(source, /^```/m, `${slug}: Part 0 article must not contain code fences`);
-      }
+      // 本项目契约:每词条倒数第二节是 ## 练习,C++ 一律不出现。
+      assert.equal(headings.at(-2), '练习', `${slug}: second-to-last h2 must be 练习`);
+      assert.doesNotMatch(source, /^```(cpp|c\+\+|cxx)\s*$/m, `${slug}: C++ code fences are banned`);
     }
   });
 

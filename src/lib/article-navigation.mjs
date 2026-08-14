@@ -95,25 +95,27 @@ export function getArticleNavigation(paths, {
   );
 
   if (mainlineEntry) {
+    // fork 决定:主线允许 known_absent 词条,前后链跳到最近的已毕业词条。
+    const mainlineSlugs = paths.path.mainline.entries.map((entry) => entry.slug);
     return {
       mode: 'mainline',
       stageId: mainlineEntry.stageId,
       stage: paths.path.mainline.stages.find((stage) => stage.id === mainlineEntry.stageId),
-      previousSlug: mainlineEntry.previousSlug,
-      nextSlug: mainlineEntry.nextSlug,
+      previousSlug: getPreviousAvailableSlug(mainlineSlugs, slug, available),
+      nextSlug: getNextAvailableSlug(mainlineSlugs, slug, available),
       backfillReturns: getBackfillReturns(paths, slug),
       hrefQuery: undefined,
     };
   }
 
   if (branch) {
-    const branchEntry = findSequenceEntry(branch.entries, slug);
+    const branchSlugs = branch.entries.map((entry) => entry.slug);
     return {
       mode: 'optional-branch',
       branchId: branch.id,
       branch,
-      previousSlug: branchEntry?.previousSlug,
-      nextSlug: branchEntry?.nextSlug,
+      previousSlug: getPreviousAvailableSlug(branchSlugs, slug, available),
+      nextSlug: getNextAvailableSlug(branchSlugs, slug, available),
       returnSlug: branchReturnSlug(paths, branch),
       backfillReturns: getBackfillReturns(paths, slug),
       hrefQuery: undefined,
