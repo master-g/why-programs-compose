@@ -405,12 +405,12 @@ html[data-theme="black"] .theme-toggle__icon--sun {
 .site-search__shortcut {
   align-self: center;
   margin-right: 2px;
-  padding: 1px 5px;
+  padding: 2px 7px;
   border: 1px solid var(--hairline);
-  border-radius: 4px;
+  border-radius: 5px;
   color: var(--muted);
   background: var(--note);
-  font: 500 9px/1.4 var(--font-mono);
+  font: 500 12px/1.4 var(--font-mono);
 }
 
 .site-search__suggestions {
@@ -1209,6 +1209,13 @@ html[data-theme="black"] .theme-toggle__icon--sun {
   border-top: 1px solid var(--hairline);
 }
 
+/* 首个 h2 之前的导语不在 .article-section 内,补上正文列宽约束,
+   否则横穿 1080px 容器并与宽屏大纲栏重叠。 */
+.article-content > p,
+.article-content > blockquote {
+  max-width: min(680px, 100%);
+}
+
 .article-section {
   width: min(680px, 100%);
   margin-bottom: 64px;
@@ -1222,6 +1229,7 @@ html[data-theme="black"] .theme-toggle__icon--sun {
   margin: 0 0 22px;
   color: var(--ink);
   font: 600 30px/1.3 var(--font-serif);
+  scroll-margin-top: 90px;
 }
 
 .article-section h3 {
@@ -2339,6 +2347,7 @@ html[data-theme="black"] pre.astro-code span {
   color: var(--muted);
   font: 400 14px/1.55 var(--font-sans);
   text-decoration: none;
+  transition: color 0.18s ease;
 }
 
 .article-outline a:hover {
@@ -2346,8 +2355,24 @@ html[data-theme="black"] pre.astro-code span {
 }
 
 .article-outline a.is-active {
-  border-left-color: var(--accent);
   color: var(--ink);
+}
+
+/* pill 用逐项左线;rail 的高亮由滑动 marker 承担 */
+.article-outline--pill a.is-active {
+  border-left-color: var(--accent);
+}
+
+.article-outline__marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0;
+  background: var(--accent);
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .article-outline__title {
@@ -2419,6 +2444,28 @@ html[data-theme="black"] pre.astro-code span {
     border-radius: 12px;
     background: var(--paper);
     box-shadow: 0 12px 32px rgb(0 0 0 / 0.1);
+  }
+
+  .article-outline--pill[open] ol {
+    animation: article-outline-pop 0.18s ease;
+  }
+}
+
+@keyframes article-outline-pop {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-outline a,
+  .article-outline__marker {
+    transition-duration: 0.01ms;
+  }
+
+  .article-outline--pill[open] ol {
+    animation: none;
   }
 }
 

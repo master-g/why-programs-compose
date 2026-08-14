@@ -10,6 +10,7 @@ const items = headings.filter((heading) => heading.depth === 2);
 {items.length > 1 && (
   <>
     <nav class="article-outline article-outline--rail" aria-label="本页大纲">
+      <span class="article-outline__marker" aria-hidden="true"></span>
       <span class="article-outline__title">本页大纲</span>
       <ol>
         {items.map((heading) => (
@@ -44,6 +45,7 @@ const items = headings.filter((heading) => heading.depth === 2);
         if (!heads.length) return;
         const currentLabel = document.querySelector('[data-outline-current]');
         const pill = document.querySelector('.article-outline--pill');
+        const marker = document.querySelector('.article-outline__marker');
         let activeId = '';
         let ticking = false;
 
@@ -56,6 +58,13 @@ const items = headings.filter((heading) => heading.depth === 2);
           const index = ids.indexOf(id);
           if (currentLabel && index >= 0) {
             currentLabel.textContent = `${heads[index].textContent} · ${index + 1}/${heads.length}`;
+          }
+          const railLink = links.find(
+            (link) => link.dataset.outlineLink === id && link.closest('.article-outline--rail'),
+          );
+          if (marker && railLink) {
+            marker.style.transform = `translateY(${railLink.offsetTop}px)`;
+            marker.style.height = `${railLink.offsetHeight}px`;
           }
         }
 
