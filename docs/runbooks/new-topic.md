@@ -5,10 +5,24 @@
 
 先读一遍「省不掉的部分」再决定要不要开:替换字符串是半天,设计大纲是几周。
 
+## 零、模板与学习库是同一个仓库
+
+本仓库一边继续推进自己的 topic,一边充当模板。**Use this template** 复制的是当时默认分支的
+完整文件树快照 —— 包括已毕业的词条、插图、大纲与术语表,但不含 Git 历史、Pages 设置与 secrets。
+
+要删的都是整目录,清空成本不随源 topic 的写作进度增长(见第五节)。唯一随进度变化的是
+**内容许可的约束**:源 topic 的词条许可会跟着复制过来,不删干净就不能换许可(见第二节)。
+
 ## 一、开仓库
 
-1. 在 GitHub 点 **Use this template** 建新仓库,克隆到本地。
-2. `npm install`。
+1. 在 GitHub 点 **Use this template** 建新仓库。
+2. **先启用 Pages,再推第一个提交**:
+   ```bash
+   gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow
+   ```
+   新仓库继承 `.github/workflows/deploy.yml`,首次 push 会立刻触发部署;Pages 未启用时
+   `configure-pages` 步骤直接失败,留一条红色的运行记录。
+3. 克隆到本地,`npm install`。
 
 ## 二、改身份(唯一事实源)
 
@@ -25,6 +39,11 @@
 **许可要先想清楚,后面不好改。** 源材料带 share-alike(如 CC BY-SA)时,衍生内容必须沿用同款,
 不能加 NC 条款;全原创的 topic 可以用 CC BY-NC-SA 4.0。改完这里,`LICENSE.md` 与
 `README.md` 里的许可段落要手动同步 —— `npm test` 会校验 README 与配置一致,不一致直接红。
+
+**换许可前必须先清空源 topic 的内容(第五节)。** 模板带来的词条继承的是源 topic 的许可;
+源 topic 是 CC BY-SA 而新 topic 想用 CC BY-NC-SA 时,仓库里若还留着旧词条,
+就同时存在 NC 声明和 share-alike 衍生内容 —— 这是实质性的许可冲突,不是整洁问题。
+许可相同时没有这条约束,但旧内容仍应删掉。
 
 ## 三、改文案
 
@@ -54,14 +73,23 @@
 
 ## 五、重建内容骨架
 
-这一步没有捷径,是真正的工作量:
+先删干净。两条命令,与源 topic 写了多少词条无关:
+
+```bash
+rm -rf content-zh/*/
+find public/assets -mindepth 1 -maxdepth 1 -type d ! -name playground -exec rm -rf {} +
+```
+
+`public/assets/playground/` 必须留 —— 它是手维护的渲染回归夹具,不参与同步。
+`src/lib/dangling-links.json` 目前是空表;源 topic 若在里面登记过别名或外链,一并清空。
+
+剩下的没有捷径,是真正的工作量:
 
 1. `sections.yaml` —— 设计 parts / sections / entries 三层大纲,全部 slug 进 `known_absent`。
 2. `learning-paths.yaml` —— 第一遍主线、前置层、参考轨。
 3. `glossary/glossary.md` —— 术语表清空重写。
-4. `content-zh/` 与 `public/assets/<section>/` —— 删掉旧 topic 的产物目录(它们是 `npm run sync` 的产物,不手写)。
-5. vault 里建飞地 `03 - AREAS/learning/<repo>/` 并写 `_README.md` 写作约定。
-6. 测试夹具里的示例 slug:`tests/unit/article-navigation.test.mjs`、`learning-paths.test.mjs`、
+4. vault 里建飞地 `03 - AREAS/learning/<repo>/` 并写 `_README.md` 写作约定。
+5. 测试夹具里的示例 slug:`tests/unit/article-navigation.test.mjs`、`learning-paths.test.mjs`、
    `content-inventory.test.mjs` 引用了当前 topic 的 slug 与 part id,按新大纲改写。
 
 ## 六、陷阱
@@ -91,10 +119,9 @@ npm run build                 # 含 postbuild:公式、插图、SVG 主题、全
 npm run check:public-release   # 发布边界
 ```
 
-发布走 `docs/runbooks/` 同级流程:`gh repo create <repo> --public --source=. --remote=origin --push`,
-然后 `gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow` 启用 Pages。
+Pages 已在第一节启用,推送即部署。核对线上首页、`/learn/`、`/category/` 均为 200。
 
-**推送会被 workflow scope 拦。** 仓库含 `.github/workflows/`,而 gh 的默认 token 没有
+**推送可能被 workflow scope 拦。** 仓库含 `.github/workflows/`,而 gh 的默认 token 没有
 `workflow` scope,首次推送报 `refusing to allow an OAuth App to create or update workflow`。
 跑一次 `gh auth refresh -h github.com -s workflow` 即可。
 (SSH 也能绕过,但全局 git config 里的 `url.https://github.com/.insteadOf git@github.com:`
