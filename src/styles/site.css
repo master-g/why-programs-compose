@@ -11,7 +11,7 @@
   --accent: #a9583e;
   --font-serif: "Source Han Serif SC", "Songti SC", STSong, SimSun, serif;
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-mono: "MonoLisaCode", "MonoLisa", "Operator Mono", "JetBrains Mono", "JetBrains Maple Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   color-scheme: light;
 }
 
@@ -1343,7 +1343,7 @@ html[data-theme="black"] .theme-toggle__icon--sun {
   border: 1px solid var(--hairline);
   border-radius: 6px;
   background: var(--note);
-  font: 400 14px/1.7 var(--font-mono);
+  font: 400 15px/1.75 var(--font-mono);
 }
 
 /* shiki 双主题:span 行内带浅色 color 与 --shiki-dark 变量(shiki-theme.mjs),
