@@ -12,6 +12,8 @@
 
 ## 失败尝试
 
+- **marginnote 正文不能以 $math$/行内代码开头**:rehype-sidenotes 要求标签行换行后的首个文本节点非空,math 开头会抛「必须包含标签和单段正文」。更危险的是 glob-loader 把该异常吞成 [ERROR] 日志,dev/build 都产出空正文页面并静默通过全部 postbuild 门禁——已加 tests/unit/content-render.test.mjs 渲染冒烟堵住。
+
 - `node --test tests/unit/` 不展开 glob,要用 `npm test`(pattern 'tests/**/*.test.mjs')。
 - 词条初稿按 vault 半角标点风格写,与站点全角口径冲突,返工一轮;新词条直接写全角。
 
