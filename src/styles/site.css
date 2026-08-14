@@ -2317,3 +2317,113 @@ html[data-theme="black"] pre.astro-code span {
     transition-duration: 0.01ms;
   }
 }
+
+/* Article outline(本页大纲):宽屏右栏 + 中屏收纳 pill。
+   几何依据:容器 1080px 居中,旁注悬挂止于容器内 x=1000(即 50%+460px);
+   右栏从 50%+480px 起占 200px,右缘 50%+680px,故 1360px 视口起放得下。 */
+.article-outline {
+  display: none;
+}
+
+.article-outline ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article-outline a {
+  display: block;
+  margin-left: -1px;
+  padding: 5px 0 5px 14px;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  font: 400 14px/1.55 var(--font-sans);
+  text-decoration: none;
+}
+
+.article-outline a:hover {
+  color: var(--ink);
+}
+
+.article-outline a.is-active {
+  border-left-color: var(--accent);
+  color: var(--ink);
+}
+
+.article-outline__title {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font: 600 10px/1.2 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 1360px) {
+  .article-outline--rail {
+    display: block;
+    position: fixed;
+    top: 128px;
+    left: calc(50% + 480px);
+    width: 200px;
+    max-height: calc(100vh - 190px);
+    overflow-y: auto;
+  }
+
+  .article-outline--rail ol {
+    border-left: 1px solid var(--hairline);
+  }
+}
+
+@media (min-width: 1040px) and (max-width: 1359.98px) {
+  .article-outline--pill {
+    display: block;
+    position: fixed;
+    top: 74px;
+    right: 20px;
+    z-index: 25;
+  }
+
+  .article-outline--pill summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 7px 16px;
+    border: 1px solid var(--hairline-dark);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(10px);
+    color: var(--muted);
+    font: 600 12px/1.3 var(--font-mono);
+  }
+
+  .article-outline--pill summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .article-outline--pill summary::after {
+    content: " ▾";
+  }
+
+  .article-outline--pill[open] summary {
+    color: var(--ink);
+  }
+
+  .article-outline--pill ol {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 200px;
+    max-width: 280px;
+    padding: 12px 18px;
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    background: var(--paper);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.1);
+  }
+}
+
+@media print {
+  .article-outline {
+    display: none;
+  }
+}

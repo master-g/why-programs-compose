@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleOutline from '../components/ArticleOutline.astro';
 import { render } from 'astro:content';
 import { getSection } from '../lib/sections.mjs';
 import { getArticleNavigation } from '../lib/article-navigation.mjs';
@@ -27,7 +28,7 @@ export async function getStaticPaths() {
 }
 
 const { entry, section, navigation, pathEntry } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const sectionMeta = getSection(section);
 const articleIndex = sectionMeta?.entries.indexOf(entry.id.split('/')[1]) ?? -1;
 const articleNumber = articleIndex >= 0 ? articleIndex + 1 : 1;
@@ -63,6 +64,8 @@ const mathRole = pathEntry?.roles.find((role) => role.type === 'math');
         {mathRole && <span>数学层级：{mathRole.layer === 'core' ? '最小前置' : mathRole.layer === 'backfill' ? '按需回补' : '进阶参考'}</span>}
       </aside>
     </header>
+
+    <ArticleOutline headings={headings} />
 
     <div class="article-content">
       <Content />

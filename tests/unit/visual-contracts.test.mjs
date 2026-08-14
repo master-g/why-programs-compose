@@ -9,6 +9,7 @@ const learnPage = existsSync('src/pages/learn.astro') ? readFileSync('src/pages/
 const categoryPage = readFileSync('src/pages/category/[section]/index.astro', 'utf8');
 const articlePage = readFileSync('src/pages/[slug].astro', 'utf8');
 const searchBox = readFileSync('src/components/SearchBox.astro', 'utf8');
+const articleOutline = readFileSync('src/components/ArticleOutline.astro', 'utf8');
 const themeToggle = readFileSync('src/components/ThemeToggle.astro', 'utf8');
 const siteCss = readFileSync('src/styles/site.css', 'utf8');
 const playgroundMarkdown = readFileSync('playground/rendering.md', 'utf8');
@@ -112,6 +113,16 @@ describe('independent visual contracts', () => {
     assert.match(learnPage, /<blockquote class="epigraph"/);
     assert.match(learnPage, /class="newthought"/);
     assert.match(learnPage, /<details/);
+  });
+
+  it('renders the article outline as wide rail plus collapsed pill with no-JS fallback', () => {
+    assert.match(articlePage, /ArticleOutline headings=\{headings\}/);
+    assert.match(articleOutline, /article-outline--rail/);
+    assert.match(articleOutline, /<details class="article-outline article-outline--pill">/);
+    assert.match(articleOutline, /items\.length > 1/, 'single-heading articles must not render an outline');
+    assert.match(siteCss, /@media \(min-width: 1360px\)[\s\S]*?\.article-outline--rail\s*\{[^}]*position: fixed;[^}]*left: calc\(50% \+ 480px\);/);
+    assert.match(siteCss, /@media \(min-width: 1040px\) and \(max-width: 1359\.98px\)[\s\S]*?\.article-outline--pill\s*\{[^}]*position: fixed;/);
+    assert.match(siteCss, /\.article-outline\s*\{\s*display: none;/, 'outline must be hidden by default (mobile)');
   });
 
   it('marks category roles and non-blocking math backfill without empty placeholders', () => {
