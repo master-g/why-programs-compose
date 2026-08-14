@@ -21,6 +21,9 @@
 
 - 2026-08-14 去 WML 化完成(2913760):主页 hero、about、learn、category 页、article-navigation 文案、docs/authoring 三篇路径与示例、sync 脚本索引标题、astro.config 注释全部改为 WPC;learn.astro 的 `stage.id === 'math-core'` 改为 `stage.kind === 'core-math'`(否则记号前置阶段走不进 math-groups 渲染分支);空的 backfill/reference/支线区块加条件隐藏;visual-contracts 里 WML 硬编码 17/56/21 断言改为通用断言。保留:README/CLAUDE/LICENSES 的 fork 归属声明、测试夹具内的合成范数示例。
 
+- 2026-08-14 本页大纲上线(8316367):src/components/ArticleOutline.astro,数据取 `render(entry)` 的 headings(只取 h2,少于 2 个不渲染)。布局几何:容器 1080px 居中,旁注悬挂止于 50%+460px;≥1360px 右栏 fixed 于 `left: calc(50% + 480px)` 宽 200px 与旁注零冲突;1040–1359px 退化为右上角 `<details>` pill;<1040px 隐藏。滚动高亮用「视口 140px 阅读线以上最后一个标题」语义(scroll + rAF,同 VitePress),渐进增强,无 JS 时右栏为纯锚点列表。
+- **内联脚本陷阱**:组件 DOM 在正文之前,`<script is:inline>` 同步执行时 h2 尚未解析,`getElementById` 全空导致静默 return——必须等 DOMContentLoaded 再 init。首版踩过,dump-dom 验证时发现。
+
 ## 上次会话(2026-08-14)
 
 - 完成 repo 脚手架、sections.yaml、learning-paths.yaml、glossary(迁自旧译词汇表)、CLAUDE/README/LICENSE、内容耦合测试改写(learning-paths、article-navigation、render-page-structure 夹具、删 3 个 WML 试点测试)、playground 链接替换、首词条 category + SVG。
