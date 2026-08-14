@@ -1,0 +1,200 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getLearningPaths } from '../lib/learning-paths.mjs';
+import { withBase } from '../lib/base.mjs';
+import { getEntries } from './_entries.mjs';
+
+const learning = getLearningPaths();
+const entries = await getEntries();
+const bySlug = new Map(entries.map((entry) => [entry.id.split('/')[1], entry]));
+
+function titleFor(item) {
+  return bySlug.get(item.slug)?.data.title || item.slug;
+}
+
+function groupBySection(items) {
+  const groups = new Map();
+  for (const item of items) {
+    const key = item.sectionId || 'math-core';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  }
+  return groups;
+}
+
+function sectionName(sectionId) {
+  if (sectionId === 'math-core') return '五组最小数学前置';
+  return learning.sections.get(sectionId)?.name_zh || sectionId;
+}
+
+function countAvailable(items) {
+  return items.filter((item) => item.available && bySlug.has(item.slug)).length;
+}
+
+const core = learning.math.layers.core;
+const backfill = learning.math.layers.backfill;
+const reference = learning.math.layers.reference;
+---
+
+<BaseLayout title="学习路径 | 程序为什么能组合">
+  <div class="learning-path-page">
+    <nav class="breadcrumbs" aria-label="面包屑">
+      <a href={withBase('/')}>全库目录</a><span>/</span><span>学习路径</span>
+    </nav>
+
+    <header class="learning-path-header">
+      <span class="page-kicker">第一遍主线 · 无状态入口</span>
+      <h1>先看到模型学习，再回补需要的数学。</h1>
+      <p>这条路径把 94 篇数学内容分成 17 篇最小前置、56 篇按需回补和 21 篇进阶参考。你可以沿主线继续，不需要先完成全部数学地基。</p>
+      <blockquote class="epigraph">
+        <p>先让学习闭环出现，再为当前问题补上必要的推导。</p>
+        <footer>——本项目学习路径说明</footer>
+      </blockquote>
+    </header>
+
+    <section class="learning-path-summary" aria-labelledby="learning-path-summary-title">
+      <div>
+        <span class="page-kicker">阅读合同</span>
+        <h2 id="learning-path-summary-title">三种动作</h2>
+      </div>
+      <ol>
+        <li><strong>现在读</strong><span>沿第一遍主线推进。</span></li>
+        <li><strong>遇到推导困难时回补</strong><span>只打开当前模型真正引用的数学。</span></li>
+        <li><strong>按兴趣参考</strong><span>在完成主线后继续理论轨。</span></li>
+      </ol>
+    </section>
+
+    <section class="learning-path-mainline" aria-labelledby="learning-path-mainline-title">
+      <header class="learning-path-section-head">
+        <div>
+          <span class="page-kicker">现在读 · {learning.path.mainline.entries.length} 篇</span>
+          <h2 id="learning-path-mainline-title">第一遍主线</h2>
+        </div>
+        <p>每个阶段都提供下一篇稳定链接。阶段内的目录只是入口说明，不会改变原章节归属。</p>
+      </header>
+
+      {learning.path.mainline.stages.map((stage, stageIndex) => (
+        <section class="learning-path-stage" id={`stage-${stage.id}`} aria-labelledby={`stage-${stage.id}-title`}>
+          <header class="learning-path-stage__head">
+            <span class="learning-path-stage__number">0{stageIndex + 1}</span>
+            <div>
+              <span class="page-kicker">阶段 {stageIndex + 1} · {stage.entries.length} 篇</span>
+              <h3 id={`stage-${stage.id}-title`}>{stage.name_zh}</h3>
+              <p class="newthought">{stage.goal_zh}</p>
+            </div>
+          </header>
+
+          {stage.id === 'math-core' ? (
+            <div class="learning-path-math-groups">
+              {core.groups.map((group) => (
+                <section class="learning-path-math-group" aria-labelledby={`math-group-${group.id}`}>
+                  <header>
+                    <h4 id={`math-group-${group.id}`}>{group.name_zh}</h4>
+                    <span>{group.entries.length} 篇</span>
+                  </header>
+                  <ol>
+                    {group.entries.map((item) => (
+                      <li>
+                        {bySlug.has(item.slug)
+                          ? <a href={withBase(`/${item.slug}/`)}>{titleFor(item)}</a>
+                          : <span>{item.slug}</span>}
+                        <p><strong>现在为什么需要：</strong>{item.why_now_zh}</p>
+                        <p><strong>阅读目标：</strong>{item.reading_goal_zh}</p>
+                        <small>首次用途：{titleFor({ slug: item.first_use })}</small>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              ))}
+            </div>
+          ) : (
+            <div class="learning-path-section-groups">
+              {[...groupBySection(stage.entries)].map(([sectionId, sectionEntries]) => (
+                <details class="learning-path-section-disclosure" open={stageIndex === 1}>
+                  <summary>
+                    <span>{sectionName(sectionId)}</span>
+                    <small>{countAvailable(sectionEntries)} / {sectionEntries.length} 篇</small>
+                  </summary>
+                  <ol>
+                    {sectionEntries.map((item) => (
+                      <li>
+                        {item.available && bySlug.has(item.slug)
+                          ? <a href={withBase(`/${item.slug}/`)}>{titleFor(item)}</a>
+                          : <span class="entry-todo">{item.slug} · TODO</span>}
+                      </li>
+                    ))}
+                  </ol>
+                </details>
+              ))}
+            </div>
+          )}
+        </section>
+      ))}
+    </section>
+
+    <section class="learning-path-secondary" aria-labelledby="learning-path-secondary-title">
+      <header class="learning-path-section-head">
+        <div>
+          <span class="page-kicker">不计入主线进度</span>
+          <h2 id="learning-path-secondary-title">回补与参考</h2>
+        </div>
+        <p>这些入口保留完整数学地图，但不会插入主线的前后关系。</p>
+      </header>
+
+      <details class="learning-path-disclosure" open>
+        <summary><span>遇到推导困难时回补 · {backfill.entries.length} 篇</span><small>三个使用场景</small></summary>
+        <div class="learning-path-card-grid">
+          {backfill.groups.map((group) => (
+            <section class="learning-path-card" aria-labelledby={`backfill-${group.id}`}>
+              <h3 id={`backfill-${group.id}`}>{group.name_zh}</h3>
+              <p>{group.purpose_zh}</p>
+              <ol>
+                {group.entries.map((item) => (
+                  <li>
+                    {bySlug.has(item.slug)
+                      ? <a href={withBase(`/${item.slug}/`)}>{titleFor(item)}</a>
+                      : <span class="entry-todo">{item.slug} · TODO</span>}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))}
+        </div>
+      </details>
+
+      <details class="learning-path-disclosure">
+        <summary><span>按兴趣参考 · {reference.entries.length} 篇</span><small>进阶数学</small></summary>
+        <ol class="learning-path-reference-list">
+          {reference.entries.map((item) => (
+            <li>
+              {item.available && bySlug.has(item.slug)
+                ? <a href={withBase(`/${item.slug}/`)}>{titleFor(item)}</a>
+                : <span class="entry-todo">{item.slug} · TODO</span>}
+            </li>
+          ))}
+        </ol>
+      </details>
+
+      {learning.path.optionalBranches.map((branch) => (
+        <details class="learning-path-disclosure">
+          <summary><span>可选支线 · {branch.name_zh}</span><small>{branch.entries.length} 篇</small></summary>
+          <p>{branch.description_zh}</p>
+          <ol class="learning-path-reference-list">
+            {branch.entries.map((item) => (
+              <li>
+                {item.available && bySlug.has(item.slug)
+                  ? <a href={withBase(`/${item.slug}/`)}>{titleFor(item)}</a>
+                  : <span class="entry-todo">{item.slug} · TODO</span>}
+              </li>
+            ))}
+          </ol>
+        </details>
+      ))}
+    </section>
+
+    <footer class="learning-path-footer">
+      <a class="button-primary" href={withBase('/category/linear-algebra/')}>查看完整数学地基</a>
+      <a class="button-secondary" href={withBase('/')}>返回全库目录</a>
+    </footer>
+  </div>
+</BaseLayout>

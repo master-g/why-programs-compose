@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getSectionPathContext } from '../../../lib/article-navigation.mjs';
+import { getLearningPaths } from '../../../lib/learning-paths.mjs';
+import { getSections } from '../../../lib/sections.mjs';
+import { withBase } from '../../../lib/base.mjs';
+import { getEntries } from '../../_entries.mjs';
+
+export async function getStaticPaths() {
+  return getSections().map((section) => ({
+    params: { section: section.dir },
+    props: { section },
+  }));
+}
+
+const { section } = Astro.props;
+const entries = await getEntries();
+const bySlug = new Map(entries.map((entry) => [entry.id.split('/')[1], entry]));
+const learning = getLearningPaths();
+const pathContext = getSectionPathContext(learning, section.dir);
+const title = `${section.name_zh} | 程序为什么能组合`;
+---
+
+<BaseLayout title={title}>
+  <div class="category-page">
+    <nav class="breadcrumbs" aria-label="面包屑">
+      <a href={withBase('/')}>全库目录</a><span>/</span><span>{section.name_zh}</span>
+    </nav>
+
+    <header class="category-header">
+      <span class="page-kicker">第 {section.order} 章 · {section.entries.length} 篇</span>
+      <h1>{section.name_zh}</h1>
+      {section.description_zh && <p>{section.description_zh}</p>}
+      {pathContext.mathGroups.length > 0 ? (
+        <div class="category-path-role">
+          <strong>数学地基</strong>
+          <span>第一遍按“现在读”推进</span>
+          <small>“按需回补”和“形式参考”不构成进入机器学习的条件。</small>
+        </div>
+      ) : (pathContext.mainlineStage || pathContext.optionalBranch) && (
+        <div class="category-path-role">
+          <strong>{pathContext.mainlineStage ? '第一遍主线' : '可选支线'}</strong>
+          <span>{pathContext.mainlineStage?.name_zh || pathContext.optionalBranch?.name_zh}</span>
+          <small>{pathContext.mainlineStage ? '本章词条按主线前后关系提供导航。' : '本章不计入主线进度，可从学习路径返回。'}</small>
+        </div>
+      )}
+      {pathContext.backfillGroups.length > 0 && (
+        <aside class="category-backfill" aria-label="按需数学回补">
+          <strong>遇到推导困难时回补</strong>
+          <p>以下数学组为当前章节提供推导支撑，不构成进入下一篇的条件。</p>
+          <ul>
+            {pathContext.backfillGroups.map((group) => (
+              <li>
+                <span>{group.name_zh}</span>
+                <small>{group.entries.length} 篇</small>
+                <div>
+                  {group.entries.slice(0, 4).map((item) => (
+                    bySlug.has(item.slug)
+                      ? <a href={withBase(`/${item.slug}/`)}>{bySlug.get(item.slug).data.title}</a>
+                      : <span>{item.slug} · TODO</span>
+                  ))}
+                  {group.entries.length > 4 && <em>等 {group.entries.length} 篇</em>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )}
+    </header>
+
+    <section class="category-contents" aria-labelledby="category-contents-title">
+      <h2 id="category-contents-title">{pathContext.mathGroups.length > 0 ? '本章学习顺序' : '本章目录'}</h2>
+      {pathContext.mathGroups.length > 0 ? (
+        <div class="chapter-list-groups">
+          {pathContext.mathGroups.map((group) => (
+            <section class={`chapter-list-group chapter-list-group--${group.layer}`} aria-labelledby={`chapter-list-${group.layer}`}>
+              <header>
+                <h3 id={`chapter-list-${group.layer}`}>{group.actionLabel}</h3>
+                <p>{group.descriptionZh}</p>
+                <small>{group.entries.length} 篇</small>
+              </header>
+              <ol class="chapter-list">
+                {group.entries.map((item) => {
+                  const entry = bySlug.get(item.slug);
+                  return (
+                    <li>
+                      {entry ? (
+                        <a href={withBase(`/${item.slug}/`)}>
+                          <span>{String(item.indexInSection + 1).padStart(2, '0')}</span>
+                          <strong>{entry.data.title}</strong>
+                        </a>
+                      ) : (
+                        <div class="chapter-list__todo">
+                          <span>{String(item.indexInSection + 1).padStart(2, '0')}</span>
+                          <strong>{item.slug}</strong>
+                          <small>TODO</small>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <ol class="chapter-list">
+          {section.entries.map((slug, index) => {
+            const entry = bySlug.get(slug);
+            return (
+              <li>
+                {entry ? (
+                  <a href={withBase(`/${slug}/`)}>
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <strong>{entry.data.title}</strong>
+                  </a>
+                ) : (
+                  <div class="chapter-list__todo">
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <strong>{slug}</strong>
+                    <small>TODO</small>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </section>
+  </div>
+</BaseLayout>

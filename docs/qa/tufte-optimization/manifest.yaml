@@ -1,0 +1,4 @@
+# Tufte 逐篇优化台账。sections.yaml 与 learning-paths.yaml 决定库存和学习角色。
+# 执行开始后只更新审查字段；不要复制标题、章节顺序或正文事实。
+version: 1
+entries: []

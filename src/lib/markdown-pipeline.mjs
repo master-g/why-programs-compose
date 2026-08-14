@@ -1,0 +1,193 @@
+import remarkMath from "remark-math";
+import rehypeMathjax from "rehype-mathjax/svg";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import rehypeMarkStandaloneMath from "../plugins/rehype-mark-standalone-math.mjs";
+import rehypePrefixBase from "../plugins/rehype-prefix-base.mjs";
+import rehypeRewriteAlgebrica from "../plugins/rehype-rewrite-algebrica.mjs";
+import rehypeSectionizeAlgebrica from "../plugins/rehype-sectionize-algebrica.mjs";
+import rehypeSidenotes from "../plugins/rehype-sidenotes.mjs";
+import rehypeTufteBlocks from "../plugins/rehype-tufte-blocks.mjs";
+import { BASE } from "./base.mjs";
+
+/**
+ * MathJax、旁注、代码高亮与文章分节共用的 sanitize schema。
+ * Markdown 不启用 raw HTML；放行元素均由受控 rehype 插件生成。
+ */
+export function makeMarkdownSanitizeSchema(base = defaultSchema) {
+	return {
+		...base,
+		// MathJax <path id>、<use href> 与旁注锚点必须逐字对应。
+		clobber: [],
+		tagNames: [
+			...(base.tagNames || []),
+			"aside",
+			"figure",
+			"figcaption",
+			"footer",
+			"style",
+			"mjx-container",
+			"mjx-assistive-mml",
+			"mjx-math",
+			"mjx-mrow",
+			"mjx-mi",
+			"mjx-mo",
+			"mjx-mn",
+			"mjx-mtext",
+			"mjx-mspace",
+			"mjx-msub",
+			"mjx-msup",
+			"mjx-msubsup",
+			"mjx-mfrac",
+			"mjx-msqrt",
+			"mjx-mroot",
+			"mjx-munder",
+			"mjx-mover",
+			"mjx-munderover",
+			"mjx-mtable",
+			"mjx-mtr",
+			"mjx-mtd",
+			"mjx-semantics",
+			"mjx-annotation",
+			"svg",
+			"g",
+			"path",
+			"defs",
+			"use",
+			"line",
+			"rect",
+			"circle",
+			"ellipse",
+			"polygon",
+			"polyline",
+			"text",
+			"tspan",
+			"clipPath",
+			"linearGradient",
+			"radialGradient",
+			"stop",
+			"symbol",
+		],
+		attributes: {
+			...(base.attributes || {}),
+			"mjx-container": [
+				"class",
+				"jax",
+				"display",
+				"justify",
+				"width",
+				"role",
+				"style",
+				"tabIndex",
+			],
+			"mjx-assistive-mml": ["role"],
+			"mjx-math": ["xmlns", "display", "alttext"],
+			svg: [
+				"xmlns",
+				"width",
+				"height",
+				"role",
+				"focusable",
+				"viewBox",
+				"xmlnsXLink",
+				"style",
+				"preserveAspectRatio",
+			],
+			g: ["stroke", "fill", "strokeWidth", "transform", "dataMmlNode", "style"],
+			path: ["id", "d"],
+			use: ["dataC", "xLinkHref", "href", "transform"],
+			line: ["x1", "y1", "x2", "y2", "stroke", "strokeWidth"],
+			rect: [
+				"x",
+				"y",
+				"width",
+				"height",
+				"rx",
+				"ry",
+				"stroke",
+				"strokeWidth",
+				"fill",
+			],
+			circle: ["cx", "cy", "r"],
+			ellipse: ["cx", "cy", "rx", "ry"],
+			polygon: ["points"],
+			polyline: ["points"],
+			text: [
+				"x",
+				"y",
+				"dx",
+				"dy",
+				"textAnchor",
+				"transform",
+				"dataVariant",
+				"font-size",
+				"font-family",
+			],
+			tspan: ["x", "y", "dx", "dy", "transform", "font-size", "font-family"],
+			clipPath: ["id"],
+			linearGradient: ["id", "x1", "y1", "x2", "y2"],
+			radialGradient: ["id", "cx", "cy", "r"],
+			stop: ["offset", "stopColor"],
+			symbol: ["id"],
+			a: [
+				"href",
+				"id",
+				"title",
+				"target",
+				"rel",
+				"class",
+				["className", "sidenote-ref", "sidenote__backref", "external-en"],
+				"ariaLabel",
+				"ariaDescribedBy",
+			],
+			aside: ["id", "class", "className", "role", "ariaLabel", "ariaLabelledBy"],
+			blockquote: ["class", "className"],
+			figure: ["class", "className"],
+			figcaption: ["class", "className"],
+			footer: ["class", "className"],
+			span: [
+				...(base.attributes?.span || []),
+				"id",
+				"class",
+				"className",
+				"style",
+				"role",
+				"ariaLabel",
+				"ariaLabelledBy",
+				"ariaHidden",
+			],
+			sup: [...(base.attributes?.sup || []), "class", "className"],
+			img: [...(base.attributes?.img || []), "alt", "title", "width", "height"],
+			section: ["dataFootnotes", ["className", "footnotes", "article-section"]],
+			pre: ["class", "style", "tabIndex"],
+			code: ["class", "style"],
+			"*": [...(base.attributes?.["*"] || []), "className", "class"],
+		},
+	};
+}
+
+/** 两个 Markdown 入口共用的插件顺序与 sanitize 配置。 */
+export function createArticleMarkdownPipeline({
+	slugMap,
+	dangling,
+	warn,
+	currentSection,
+	sectionDirs,
+	base = BASE,
+} = {}) {
+	return {
+		remarkPlugins: [remarkMath],
+		rehypePlugins: [
+			rehypeMathjax,
+			rehypeMarkStandaloneMath,
+			rehypeSidenotes,
+			rehypeTufteBlocks,
+			[
+				rehypeRewriteAlgebrica,
+				{ slugMap, dangling, warn, currentSection, sectionDirs },
+			],
+			[rehypePrefixBase, { base }],
+			rehypeSectionizeAlgebrica,
+			[rehypeSanitize, makeMarkdownSanitizeSchema()],
+		],
+	};
+}

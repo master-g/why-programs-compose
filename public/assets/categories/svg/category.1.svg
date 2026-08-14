@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" data-svg-theme="paper-ink-v1" viewBox="0 0 320 200" role="img" aria-label="组合三角形:f 从 A 到 B,g 从 B 到 C,它们的组合 g∘f 从 A 直达 C">
+  <style>
+    .svg-page-fill { fill: #faf9f5; }
+    .svg-ink-fill { fill: #312f2f; }
+    .svg-ink-stroke { stroke: #312f2f; }
+    .svg-coral-text { fill: #a9583e; }
+    .svg-coral-stroke { stroke: #cc785c; }
+    .svg-special-graphic-coral-arrow { fill: #cc785c; }
+    @media (prefers-color-scheme: dark) {
+      .svg-page-fill { fill: #151515; }
+      .svg-ink-fill { fill: #f0efe8; }
+      .svg-ink-stroke { stroke: #f0efe8; }
+      .svg-coral-text { fill: #dc896d; }
+      .svg-coral-stroke { stroke: #e28466; }
+      .svg-special-graphic-coral-arrow { fill: #e28466; }
+    }
+    text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; }
+    .label { font-style: italic; }
+  </style>
+  <rect class="svg-page-fill" x="0" y="0" width="320" height="200"/>
+  <!-- 对象 -->
+  <circle class="svg-ink-stroke svg-page-fill" cx="52" cy="150" r="16" stroke-width="1.5"/>
+  <circle class="svg-ink-stroke svg-page-fill" cx="160" cy="42" r="16" stroke-width="1.5"/>
+  <circle class="svg-ink-stroke svg-page-fill" cx="268" cy="150" r="16" stroke-width="1.5"/>
+  <text class="svg-ink-fill label" x="52" y="155" text-anchor="middle">A</text>
+  <text class="svg-ink-fill label" x="160" y="47" text-anchor="middle">B</text>
+  <text class="svg-ink-fill label" x="268" y="155" text-anchor="middle">C</text>
+  <!-- f: A → B -->
+  <line class="svg-ink-stroke" x1="64" y1="136" x2="144" y2="56" stroke-width="1.5"/>
+  <polygon class="svg-ink-fill" points="148,52 136,57 143,64"/>
+  <text class="svg-ink-fill label" x="88" y="86" text-anchor="middle">f</text>
+  <!-- g: B → C -->
+  <line class="svg-ink-stroke" x1="176" y1="56" x2="256" y2="136" stroke-width="1.5"/>
+  <polygon class="svg-ink-fill" points="260,140 253,128 246,135"/>
+  <text class="svg-ink-fill label" x="232" y="86" text-anchor="middle">g</text>
+  <!-- g∘f: A → C -->
+  <line class="svg-coral-stroke" x1="72" y1="150" x2="244" y2="150" stroke-width="1.8"/>
+  <polygon class="svg-special-graphic-coral-arrow" points="248,150 236,144 236,156"/>
+  <text class="svg-coral-text label" x="160" y="172" text-anchor="middle">g ∘ f</text>
+</svg>

@@ -1,0 +1,261 @@
+---
+import { withBase } from '../lib/base.mjs';
+
+export interface Props {
+  variant: 'desktop' | 'mobile';
+}
+
+const { variant } = Astro.props;
+const formClass = variant === 'desktop' ? 'site-search__form is-compact' : 'site-search__form';
+const searchIndexUrl = withBase('/search.json');
+const suggestionsId = `site-search-${variant}-suggestions`;
+const listId = `${suggestionsId}-list`;
+---
+
+<div class="site-search" data-search-role="container" data-search-url={searchIndexUrl} data-search-variant={variant}>
+  <form class={formClass} action={withBase('/search/')} data-search-role="form">
+    <input
+      name="s"
+      class="site-search__input"
+      type="text"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      placeholder="搜索…"
+      role="combobox"
+      aria-label="搜索词条"
+      aria-autocomplete="list"
+      aria-controls={listId}
+      aria-expanded="false"
+      data-search-role="input"
+    />
+    {variant === 'desktop' && <kbd class="site-search__shortcut" aria-hidden="true">⌘K</kbd>}
+    <button class="site-search__submit" type="submit" aria-label="搜索" title="搜索">
+      <!-- Lucide Search 图标；许可见 LICENSES/LUCIDE.txt。 -->
+      <svg
+        class="site-search__icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.3-4.3"></path>
+      </svg>
+    </button>
+  </form>
+  <div id={suggestionsId} class="site-search__suggestions" data-search-role="suggestions">
+    <ul id={listId} role="listbox" aria-label="搜索建议" data-search-role="list"></ul>
+  </div>
+</div>
+
+<script>
+  import { scoreEntry } from '../lib/search-score.mjs';
+
+  const EMPTY_TEXT = '无结果';
+  const LOADING_TEXT = '加载中…';
+  const ERROR_TEXT = '搜索不可用';
+  const UNTRANSLATED_TEXT = '未翻译';
+  const MAX_SUGGESTIONS = 5;
+
+  function initSearch(container) {
+    const form = container.querySelector('[data-search-role="form"]');
+    const input = container.querySelector('[data-search-role="input"]');
+    const list = container.querySelector('[data-search-role="list"]');
+
+    let index = [];
+    let status = 'idle'; // idle | loading | ready | error
+    let highlighted = -1;
+    let query = '';
+
+    function setOpen(open) {
+      container.classList.toggle('js-is-search-active', open);
+      container.classList.toggle('js-is-suggestion-active', open);
+      input.setAttribute('aria-expanded', String(open));
+      if (!open) input.removeAttribute('aria-activedescendant');
+    }
+
+    function close() {
+      setOpen(false);
+      highlighted = -1;
+    }
+
+    function showMessage(text) {
+      list.textContent = '';
+      const li = document.createElement('li');
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-disabled', 'true');
+      const span = document.createElement('span');
+      span.className = 'search-suggestion-message';
+      span.textContent = text;
+      li.appendChild(span);
+      list.appendChild(li);
+      setOpen(true);
+    }
+
+    function loadIndex() {
+      if (status !== 'idle') return;
+      status = 'loading';
+      showMessage(LOADING_TEXT);
+
+      fetch(container.dataset.searchUrl)
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          index = Array.isArray(data) ? data : [];
+          status = 'ready';
+          updateSuggestions(input.value);
+        })
+        .catch(() => {
+          status = 'error';
+          showMessage(ERROR_TEXT);
+        });
+    }
+
+    function rank(queryText) {
+      const q = queryText.trim();
+      if (!q) return [];
+      return index
+        .map((entry) => ({ entry, score: scoreEntry(entry, q) }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          const aLen = String(a.entry.title_en).length;
+          const bLen = String(b.entry.title_en).length;
+          if (aLen !== bLen) return aLen - bLen;
+          return String(a.entry.title_en).localeCompare(String(b.entry.title_en));
+        })
+        .slice(0, MAX_SUGGESTIONS)
+        .map((item) => item.entry);
+    }
+
+    function renderSuggestions(results) {
+      list.textContent = '';
+      highlighted = -1;
+
+      if (results.length === 0) {
+        showMessage(EMPTY_TEXT);
+        return;
+      }
+
+      for (let i = 0; i < results.length; i++) {
+        const entry = results[i];
+        const li = document.createElement('li');
+        li.id = `${container.dataset.searchVariant || 'search'}-suggestion-${i}`;
+        li.setAttribute('role', 'option');
+        li.setAttribute('aria-selected', 'false');
+        const a = document.createElement('a');
+        a.href = entry.url;
+        a.dataset.index = String(i);
+
+        const title = document.createElement('span');
+        title.className = 'search-suggestion-title';
+        title.textContent = entry.title_zh || entry.title_en;
+        a.appendChild(title);
+
+        if (!entry.title_zh) {
+          const marker = document.createElement('span');
+          marker.className = 'search-untranslated';
+          marker.textContent = UNTRANSLATED_TEXT;
+          a.appendChild(marker);
+        }
+
+        a.addEventListener('click', () => {
+          close();
+        });
+
+        li.appendChild(a);
+        list.appendChild(li);
+      }
+
+      setOpen(true);
+    }
+
+    function updateSuggestions(value) {
+      query = value;
+      if (status === 'error') {
+        showMessage(ERROR_TEXT);
+        return;
+      }
+      if (status === 'loading') {
+        showMessage(LOADING_TEXT);
+        return;
+      }
+      if (status === 'idle') {
+        loadIndex();
+        return;
+      }
+      renderSuggestions(rank(query));
+    }
+
+    function moveHighlight(delta) {
+      const items = list.querySelectorAll('li');
+      if (items.length === 0) return;
+      highlighted = (highlighted + delta + items.length) % items.length;
+      items.forEach((item, i) => {
+        const isHighlighted = i === highlighted;
+        item.classList.toggle('search-suggestion-highlight', isHighlighted);
+        item.setAttribute('aria-selected', String(isHighlighted));
+      });
+      const active = items[highlighted];
+      if (active?.id) input.setAttribute('aria-activedescendant', active.id);
+    }
+
+    function openHighlighted() {
+      const links = list.querySelectorAll('li a');
+      const target = links[highlighted] || links[0];
+      if (target) {
+        window.location.href = target.href;
+      }
+    }
+
+    input.addEventListener('focus', () => {
+      if (status === 'idle') loadIndex();
+      else if (query) updateSuggestions(query);
+    });
+
+    input.addEventListener('input', () => {
+      updateSuggestions(input.value);
+    });
+
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        moveHighlight(1);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        moveHighlight(-1);
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        openHighlighted();
+      } else if (event.key === 'Escape') {
+        const suggestionsWereOpen = input.getAttribute('aria-expanded') === 'true';
+        close();
+        input.focus();
+        if (suggestionsWereOpen) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      openHighlighted();
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!container.contains(event.target)) {
+        close();
+      }
+    });
+  }
+
+  document.querySelectorAll('[data-search-role="container"]').forEach(initSearch);
+</script>

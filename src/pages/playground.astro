@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/base.mjs';
+
+const docs = await getCollection('playground');
+docs.sort((a, b) => a.id.localeCompare(b.id));
+const rendered = await Promise.all(
+  docs.map(async (doc) => ({ doc, Content: (await render(doc)).Content })),
+);
+---
+
+<BaseLayout title="渲染试验田 | 程序为什么能组合">
+  {
+    rendered.map(({ doc, Content }) => (
+      <article class="article-page" lang="zh-CN">
+        <nav class="breadcrumbs" aria-label="面包屑"><a href={withBase('/')}>首页</a><span>/</span><span>渲染试验田</span></nav>
+        <header class="article-header article-header--single">
+          <div>
+            <span class="page-kicker">渲染回归</span>
+            <h1 class="article-title">{doc.data.title}</h1>
+          </div>
+        </header>
+        <div class="article-content">
+          <Content />
+        </div>
+      </article>
+    ))
+  }
+</BaseLayout>

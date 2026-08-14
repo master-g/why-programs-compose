@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/base.mjs';
+---
+
+<BaseLayout title="关于 | 程序为什么能组合">
+  <article class="static-page">
+    <nav class="breadcrumbs" aria-label="面包屑"><a href={withBase('/')}>首页</a><span>/</span><span>关于</span></nav>
+    <header class="static-page__header">
+      <span class="page-kicker">项目说明</span>
+      <h1>关于程序为什么能组合</h1>
+      <p>一个从数学地基出发，持续编写并核验的中文机器学习学习库。</p>
+    </header>
+
+    <div class="article-content">
+      <section class="article-section">
+        <h2>这是什么</h2>
+        <p>本站写给未来的自己。路线从向量、矩阵、概率与微积分开始，经过神经网络、Transformer、预训练、微调、推理与对齐，最终连接到可运行的模型实现。</p>
+        <p>词条是学习成果的正式沉淀。每篇词条包含定义、推导、数字实例、适用边界、失效模式与相关词条；实战类词条还保留可运行代码和运行输出。</p>
+      </section>
+
+      <section class="article-section" id="license">
+        <h2>许可范围</h2>
+        <p>中文词条与为本项目创作的原创插图按 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> 提供。转载或改编时必须署名、链接许可、标记改动，并保持相同方式共享。</p>
+        <p>本站原创软件代码采用 MIT License。依赖、图标和其他第三方材料继续遵循各自许可证，不纳入正文的 CC BY-SA 4.0 范围。</p>
+      </section>
+
+      <section class="article-section">
+        <h2>独立界面</h2>
+        <p>公开站点使用独立界面与中文排版，不发布 Algebrica 的主题包、品牌图标或主题字体文件。站点基础实现复用 <a href="https://github.com/master-g/algebrica-zh" target="_blank" rel="noopener noreferrer">algebrica-zh</a> 的 MIT 许可代码，并保留对应声明。</p>
+        <p>数学公式由 MathJax 渲染。搜索图标来自 Lucide。完整的软件依赖与第三方声明见仓库的 <a href="https://github.com/master-g/why-programs-compose/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener noreferrer">第三方声明</a>。</p>
+      </section>
+
+      <section class="article-section">
+        <h2>内容边界</h2>
+        <p>本站不把书籍、课程、论文或其他站点的正文与插图直接收入仓库。引用只用于说明概念来源和延伸阅读；需要纳入第三方材料时，必须先记录来源、作者、许可和改动。</p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

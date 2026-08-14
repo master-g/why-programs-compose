@@ -1,0 +1,87 @@
+# 学习路径:第一遍主线、记号前置层与参考轨。
+# 校验逻辑见 src/lib/learning-paths.mjs;slug 必须存在于 sections.yaml。
+math_layers:
+  core:
+    name_zh: 最小记号前置
+    description_zh: 开始主线前的三篇速查:集合记号、Haskell 签名、Rust 泛型。读到能认出记号即可,不求穷尽。
+    groups:
+      - id: notation
+        name_zh: 记号速查
+        entries:
+          - slug: sets-and-functions
+            why_now_zh: 范畴的第一个模型就是集合与函数;域、陪域、复合记号从这里来。
+            first_use: category
+            reading_goal_zh: 能读懂 f∘g、domain/codomain 与单射满射的记号。
+          - slug: haskell-notation
+            why_now_zh: 主线保留了必要的 Haskell 类型签名,先学会读 a -> b 与类型类声明。
+            first_use: category
+            reading_goal_zh: 能读懂类型签名、data 声明与 instance 声明,不要求会写。
+          - slug: rust-type-system
+            why_now_zh: 全库代码以 Rust 为主;泛型、trait、闭包三件套是每个词条的工作语言。
+            first_use: composition-in-rust
+            reading_goal_zh: 能读懂 impl Fn、trait bound 与关联类型的写法。
+  backfill:
+    groups: []
+  reference:
+    id: notation-reference
+    name_zh: 记号参考
+    purpose_zh: 暂无;主线记号前置只有三篇,全部在最小前置层。
+    entries: []
+
+paths:
+  first-pass:
+    id: first-pass
+    name_zh: 第一遍主线
+    description_zh: |
+      按 CTFP 的教学顺序走完范畴论主干:先建立『组合』的直觉,再逐层抽象到函子、自然变换、极限与单子。每一站的概念都先在 Rust 里落地一次。
+    stages:
+      - id: notation-core
+        kind: core-math
+        name_zh: 记号前置
+        goal_zh: 认识全库通用的记号,十五分钟量级。
+        math_groups: [notation]
+      - id: categories
+        kind: section-group
+        name_zh: 范畴基础
+        goal_zh: 用组合与恒等两条公理理解范畴,并在 Set、幺半群与 Kleisli 三个模型里各走一遍。
+        sections:
+          - categories
+          - types-and-functions
+          - small-categories
+          - kleisli
+          - universal-constructions
+      - id: functors
+        kind: section-group
+        name_zh: 函子与代数数据类型
+        goal_zh: 掌握保结构映射的两条法则,认出 Option、Vec、Reader 都是同一个概念的实例。
+        sections:
+          - adt
+          - functors
+          - functoriality
+          - function-types
+          - natural-transformations
+      - id: structure
+        kind: section-group
+        name_zh: 结构
+        goal_zh: 把积、余积与终端对象统一为极限,登顶 Yoneda 引理。
+        sections:
+          - limits
+          - free-structures
+          - yoneda
+      - id: composition-at-scale
+        kind: section-group
+        name_zh: 高阶组合
+        goal_zh: 用伴随导出单子,用 F-代数解释递归与折叠。
+        sections:
+          - adjunctions
+          - monads
+          - algebras
+    optional_branches: []
+    reference_tracks:
+      - id: further
+        name_zh: 延伸主题
+        description_zh: End/Coend、Kan 扩展、富化范畴与 Topos:主线完成后的四扇门,按兴趣任选。
+        sections:
+          - further
+
+backfill_for_sections: {}

@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { render } from 'astro:content';
+import { getSection } from '../lib/sections.mjs';
+import { getArticleNavigation } from '../lib/article-navigation.mjs';
+import { getLearningPaths } from '../lib/learning-paths.mjs';
+import { withBase } from '../lib/base.mjs';
+import { getEntries } from './_entries.mjs';
+
+export async function getStaticPaths() {
+  const entries = await getEntries();
+  const availableSlugs = new Set(entries.map((entry) => entry.id.split('/')[1]));
+  const learning = getLearningPaths();
+  return entries.map((entry) => {
+    const [section, slug] = entry.id.split('/');
+    const sectionMeta = getSection(section);
+    const navigation = getArticleNavigation(learning, {
+      slug,
+      sectionEntries: sectionMeta?.entries || [],
+      availableSlugs,
+    });
+    return {
+      params: { slug },
+      props: { entry, section, navigation, pathEntry: learning.entryIndex.get(slug) },
+    };
+  });
+}
+
+const { entry, section, navigation, pathEntry } = Astro.props;
+const { Content } = await render(entry);
+const sectionMeta = getSection(section);
+const articleIndex = sectionMeta?.entries.indexOf(entry.id.split('/')[1]) ?? -1;
+const articleNumber = articleIndex >= 0 ? articleIndex + 1 : 1;
+const pageTitle = `${entry.data.title} | 程序为什么能组合`;
+const modeLabel = navigation.mode === 'mainline'
+  ? `第一遍主线 · ${navigation.stage.name_zh}`
+  : navigation.mode === 'optional-branch'
+    ? `可选支线 · ${navigation.branch.name_zh}`
+    : '完整目录';
+const mathRole = pathEntry?.roles.find((role) => role.type === 'math');
+---
+
+<BaseLayout title={pageTitle} activeNav={navigation.mode === 'catalog-only' ? 'catalog' : 'learn'}>
+  <article class="article-page" lang="zh-CN">
+    <nav class="breadcrumbs" aria-label="面包屑">
+      <a href={withBase('/')}>全库目录</a><span>/</span>
+      {(navigation.mode === 'mainline' || navigation.mode === 'optional-branch') && <><a href={withBase('/learn/')}>学习路径</a><span>/</span></>}
+      <a href={withBase(`/category/${section}/`)}>{sectionMeta?.name_zh || section}</a><span>/</span>
+      <span>{entry.data.title}</span>
+    </nav>
+
+    <header class="article-header">
+      <div>
+        <span class="page-kicker">第 {sectionMeta?.order || '—'} 章 · 第 {articleNumber} 篇</span>
+        <h1 class="article-title">{entry.data.title}</h1>
+      </div>
+      <aside class="article-meta">
+        <strong>词条资料</strong>
+        <span>语言：简体中文</span>
+        <span>状态：已完成</span>
+        <span>主题：{entry.data.tags?.length || 0}</span>
+        <span>导航：{modeLabel}</span>
+        {mathRole && <span>数学层级：{mathRole.layer === 'core' ? '最小前置' : mathRole.layer === 'backfill' ? '按需回补' : '进阶参考'}</span>}
+      </aside>
+    </header>
+
+    <div class="article-content">
+      <Content />
+    </div>
+
+    <footer class="article-attribution">
+      <p>本文正文与原创插图按 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> 提供。</p>
+      <p>软件代码采用 MIT License；软件代码与第三方材料不在此许可范围内。完整边界见仓库的 <a href="https://github.com/master-g/why-programs-compose/blob/main/LICENSE.md" target="_blank" rel="noopener noreferrer">许可范围</a>。</p>
+    </footer>
+
+    {navigation.mode === 'catalog-only' ? (
+      <nav class="chapter-nav" aria-label="章节导航">
+        <div class="chapter-nav__context"><a href={withBase(`/category/${section}/`)}>← 返回本章目录</a></div>
+        <div class="chapter-nav__links">
+          {navigation.previousSlug && <a href={withBase(`/${navigation.previousSlug}/`)}>← 上一篇</a>}
+          {navigation.nextSlug ? <a href={withBase(`/${navigation.nextSlug}/`)}>下一篇 →</a> : <span>本章结束</span>}
+        </div>
+      </nav>
+    ) : (
+      <nav class="chapter-nav path-nav" aria-label="学习路径导航">
+        <div class="chapter-nav__context">
+          <a href={withBase(`/category/${section}/`)}>← 返回本章目录</a>
+          <span aria-hidden="true">·</span>
+          <a href={withBase('/learn/')}>{modeLabel}</a>
+        </div>
+        <div class="chapter-nav__links">
+          {navigation.previousSlug && <a href={withBase(`/${navigation.previousSlug}/`)}>← 上一篇</a>}
+          {navigation.nextSlug
+            ? <a href={withBase(`/${navigation.nextSlug}/`)}>下一篇 →</a>
+            : navigation.returnSlug
+              ? <a href={withBase(`/${navigation.returnSlug}/`)}>返回主线 →</a>
+              : <span>阶段结束</span>}
+        </div>
+      </nav>
+    )}
+
+    {navigation.backfillReturns.length > 0 && (
+      <nav class="article-path-returns" aria-label="返回适用学习阶段">
+        <strong>适用阶段</strong>
+        {navigation.backfillReturns.map((stage) => (
+          <a href={withBase(`/${stage.slug}/`)}>返回{stage.name_zh}</a>
+        ))}
+      </nav>
+    )}
+  </article>
+</BaseLayout>

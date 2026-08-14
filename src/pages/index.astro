@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getParts, getSections } from '../lib/sections.mjs';
+import { withBase } from '../lib/base.mjs';
+import { getEntries } from './_entries.mjs';
+
+const parts = getParts();
+const sections = getSections();
+const entries = await getEntries();
+const bySlug = new Map(entries.map((entry) => [entry.id.split('/')[1], entry]));
+const totalEntries = sections.reduce((total, section) => total + section.entries.length, 0);
+const sectionsByPart = new Map();
+for (const section of sections) {
+  const key = section.part ?? '';
+  if (!sectionsByPart.has(key)) sectionsByPart.set(key, []);
+  sectionsByPart.get(key).push(section);
+}
+---
+
+<BaseLayout title="程序为什么能组合">
+  <div class="home-page">
+    <header class="home-hero">
+      <span class="page-kicker">从数学地基到语言模型</span>
+      <h1>模型为什么<br />会学习</h1>
+      <p>一个写给未来的自己的结构化学习库。从向量开始，逐步推导神经网络、Transformer、预训练、微调、推理与对齐。</p>
+      <div class="home-hero__actions">
+        <a class="button-primary" href={withBase('/learn/')}>从这里开始</a>
+        <a class="button-secondary" href="#section-index-title">浏览全库目录</a>
+      </div>
+      <div class="home-hero__stats" aria-label="学习库进度">
+        <span><strong>{parts.length}</strong> 个部分</span>
+        <span><strong>{sections.length}</strong> 个章节</span>
+        <span><strong>{entries.length}</strong> / {totalEntries} 篇已完成</span>
+      </div>
+    </header>
+
+    <section class="section-index" aria-labelledby="section-index-title">
+      <div class="section-index__head">
+        <span class="page-kicker">全库目录</span>
+        <h2 id="section-index-title">按学习依赖阅读</h2>
+      </div>
+
+      {parts.map((part) => (
+        <section class="part-index" aria-labelledby={`part-${part.id}`}>
+          <header class="part-index__head">
+            <span class="page-kicker">第 {part.order} 部分</span>
+            <h2 id={`part-${part.id}`}>{part.name_zh}</h2>
+            <p>{part.description_zh.trim()}</p>
+          </header>
+
+          {(sectionsByPart.get(part.id) || []).map((section) => (
+            <section class="section-index__group">
+              <header class="section-index__group-head">
+                <span class="section-index__number">{String(section.order).padStart(2, '0')}</span>
+                <div>
+                  <h3><a href={withBase(`/category/${section.dir}/`)}>{section.name_zh}</a></h3>
+                  <p>{section.description_zh}</p>
+                </div>
+              </header>
+              <ol class="section-index__entries">
+                {section.entries.map((slug, index) => {
+                  const entry = bySlug.get(slug);
+                  return (
+                    <li>
+                      <span>{section.order}.{index + 1}</span>
+                      {entry
+                        ? <a href={withBase(`/${slug}/`)}>{entry.data.title}</a>
+                        : <span class="entry-todo">{slug}</span>}
+                      {!entry && <small>TODO</small>}
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          ))}
+        </section>
+      ))}
+    </section>
+  </div>
+</BaseLayout>

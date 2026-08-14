@@ -1,0 +1,184 @@
+---
+import SearchBox from '../components/SearchBox.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import '../styles/site.css';
+import { withBase } from '../lib/base.mjs';
+
+type ActiveNav = 'learn' | 'catalog' | 'glossary' | 'about';
+
+const navItems: ReadonlyArray<{ id: ActiveNav; href: string; label: string }> = [
+  { id: 'learn', href: withBase('/learn/'), label: '学习路径' },
+  { id: 'catalog', href: withBase('/'), label: '全库目录' },
+  { id: 'glossary', href: withBase('/glossary/'), label: '词汇表' },
+  { id: 'about', href: withBase('/about/'), label: '关于' },
+];
+
+export interface Props {
+  activeNav?: ActiveNav;
+  lang?: string;
+  title?: string;
+}
+const { activeNav: activeNavProp, lang = 'zh-CN', title = '程序为什么能组合' } = Astro.props;
+const currentPath = Astro.url.pathname;
+const activeNav = activeNavProp
+  ?? (currentPath.startsWith(withBase('/category/'))
+    ? 'catalog'
+    : navItems.find((item) => item.href === currentPath)?.id);
+const navCurrent = (item: ActiveNav) => activeNav === item ? 'page' : undefined;
+---
+
+<!DOCTYPE html>
+<html lang={lang} data-theme="white">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>{title}</title>
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem('why-programs-compose-theme');
+          if (saved === 'black') document.documentElement.dataset.theme = 'black';
+        } catch (_) {
+          // 本地文件预览可能禁用 storage。
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到正文</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <div class="site-header__discovery">
+          <a class="site-brand" href={withBase('/')} aria-label="程序为什么能组合首页">
+            <span class="site-brand__name">程序为什么能组合</span>
+            <span class="site-brand__tagline">结构化范畴论条目</span>
+          </a>
+          <SearchBox variant="desktop" />
+        </div>
+
+        <nav class="site-nav" aria-label="主导航">
+          {navItems.map((item) => (
+            <a href={item.href} aria-current={navCurrent(item.id)}>{item.label}</a>
+          ))}
+          <a class="site-nav__external" href="https://github.com/master-g/why-programs-compose" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <ThemeToggle />
+        </nav>
+
+        <div class="site-mobile-actions">
+          <button class="site-search-trigger" type="button" aria-label="打开搜索" title="搜索" data-mobile-search-trigger>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+          </button>
+
+          <details class="site-menu">
+            <summary aria-label="展开导航" aria-expanded="false"><span></span><span></span><span></span></summary>
+            <div class="site-menu__panel">
+              <SearchBox variant="mobile" />
+              {navItems.map((item) => (
+                <a href={item.href} aria-current={navCurrent(item.id)}>{item.label}</a>
+              ))}
+              <a href="https://github.com/master-g/why-programs-compose" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+              <div class="site-menu__appearance">
+                <span>主题</span>
+                <ThemeToggle />
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" class="site-shell">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <span>程序为什么能组合 · 独立界面与中文排版</span>
+      <span>正文与原创插图采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></span>
+    </footer>
+
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const themeToggles = Array.from(document.querySelectorAll('[data-theme-toggle]'));
+        const menu = document.querySelector('.site-menu');
+        const menuSummary = menu?.querySelector('summary');
+        const mobileSearchTrigger = document.querySelector('[data-mobile-search-trigger]');
+
+        function setTheme(theme, persist = true) {
+          const next = theme === 'black' ? 'black' : 'white';
+          const isBlack = next === 'black';
+          const label = isBlack ? '切换到白色主题' : '切换到黑色主题';
+          root.dataset.theme = next;
+          themeToggles.forEach((button) => {
+            button.setAttribute('aria-checked', String(isBlack));
+            button.setAttribute('aria-label', label);
+            button.setAttribute('title', label);
+          });
+          if (persist) {
+            try { localStorage.setItem('why-programs-compose-theme', next); } catch (_) {}
+          }
+        }
+
+        setTheme(root.dataset.theme, false);
+        themeToggles.forEach((button) => {
+          button.addEventListener('click', () => {
+            setTheme(root.dataset.theme === 'black' ? 'white' : 'black');
+          });
+        });
+
+        function syncMenuState() {
+          if (!menu || !menuSummary) return;
+          const isOpen = menu.open;
+          menuSummary.setAttribute('aria-expanded', String(isOpen));
+          menuSummary.setAttribute('aria-label', isOpen ? '收起导航' : '展开导航');
+        }
+
+        function focusMobileSearch() {
+          if (!menu) return;
+          menu.open = true;
+          syncMenuState();
+          window.setTimeout(() => {
+            menu.querySelector('[data-search-role="input"]')?.focus();
+          }, 0);
+        }
+
+        menu?.addEventListener('toggle', syncMenuState);
+        menu?.querySelectorAll('a').forEach((link) => {
+          link.addEventListener('click', () => { menu.open = false; });
+        });
+        mobileSearchTrigger?.addEventListener('click', focusMobileSearch);
+        syncMenuState();
+
+        document.addEventListener('click', (event) => {
+          if (!menu?.open) return;
+          if (menu.contains(event.target) || mobileSearchTrigger?.contains(event.target)) return;
+          menu.open = false;
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && menu?.open) {
+            event.preventDefault();
+            menu.open = false;
+            menuSummary?.focus();
+            return;
+          }
+
+          if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+            event.preventDefault();
+            if (window.matchMedia('(max-width: 900px)').matches) {
+              focusMobileSearch();
+              return;
+            }
+            document.querySelector('.site-header__discovery [data-search-role="input"]')?.focus();
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

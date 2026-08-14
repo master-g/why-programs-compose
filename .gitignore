@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.astro/
+browser-data/
+data/
+.DS_Store
+# Pi 代理会话状态(pi-goal-list-loop-audit 扩展:goal/list/loop 运行时,非项目内容)
+.pi-glla/

@@ -1,0 +1,315 @@
+# 空词条即 TODO:写过的词条从 known_absent 移除。
+# 结构:parts(部分)> sections(章)> entries(词条)。词条顺序 = 教学引入顺序;允许直觉先行、形式化后置的局部前向提示。
+# 概念骨架蒸馏自 Bartosz Milewski《Category Theory for Programmers》三部分结构;
+# 代码语言约定:Rust 为主,Haskell 仅在类型类/惰性/高阶类型的表达力对照处保留,不出现 C++。
+parts:
+  - id: foundations
+    name_zh: 记号地基
+    name_en: "Notation Foundations"
+    order: 0
+    description_zh: |
+      读懂本库所需的最小前置:集合与函数的记号、Haskell 类型签名速读、Rust 泛型与 trait 速查。每条独立成篇,主线词条直接引用,不重复讲。
+  - id: categories
+    name_zh: 范畴基础
+    name_en: "Categories"
+    order: 1
+    description_zh: |
+      从『组合是编程的本质』出发:范畴、态射、类型与函数、幺半群、Kleisli 范畴,直到泛构造给出的积与余积。
+  - id: functors
+    name_zh: 函子与代数数据类型
+    name_en: "Functors and ADTs"
+    order: 2
+    description_zh: |
+      保结构的映射:代数数据类型、函子及其法则、函子性、函数类型,收束于自然变换。
+  - id: structure
+    name_zh: 结构
+    name_en: "Structure"
+    order: 3
+    description_zh: |
+      用泛性质统一此前的一切:极限与余极限、自由结构、可表示函子,顶点是 Yoneda 引理。
+  - id: composition-at-scale
+    name_zh: 高阶组合
+    name_en: "Composition at Scale"
+    order: 4
+    description_zh: |
+      伴随、单子与 F-代数:副作用如何被组合驯服,折叠为何是普适的,以及通往更深处的几扇门。
+
+known_absent:
+  - sets-and-functions
+  - haskell-notation
+  - rust-type-system
+  - what-is-composition
+  - identity-morphism
+  - composition-in-rust
+  - types-as-sets
+  - void-unit-bool
+  - pure-functions
+  - free-category
+  - order-categories
+  - monoid
+  - hom-set
+  - writer-category
+  - kleisli-composition
+  - option-kleisli
+  - universal-construction
+  - initial-terminal
+  - duality
+  - isomorphism
+  - product
+  - coproduct
+  - product-types
+  - sum-types
+  - algebra-of-types
+  - functor
+  - functor-laws
+  - option-functor
+  - list-functor
+  - reader-functor
+  - const-functor
+  - functor-composition
+  - hkt-in-rust
+  - bifunctor
+  - profunctor
+  - functorial-adt
+  - exponential
+  - currying
+  - cartesian-closed
+  - curry-howard
+  - natural-transformation
+  - naturality
+  - parametricity
+  - functor-category
+  - declarative-programming
+  - cone-limit
+  - colimit
+  - continuity-of-functors
+  - free-monoid
+  - representable-functor
+  - yoneda-lemma
+  - yoneda-embedding
+  - adjunction
+  - product-exponential-adjunction
+  - free-forgetful
+  - monad
+  - monad-laws
+  - monads-in-rust
+  - monads-and-effects
+  - f-algebra
+  - catamorphism
+  - f-coalgebra
+  - ends-coends
+  - kan-extensions
+  - enriched-categories
+  - topos
+
+sections:
+  - dir: notation
+    part: foundations
+    name_en: "Notation"
+    name_zh: 记号
+    order: 0
+    entries:
+      - sets-and-functions
+      - haskell-notation
+      - rust-type-system
+    description_zh: 集合与函数、Haskell 签名、Rust 泛型与 trait 的最小速查。
+
+  - dir: categories
+    part: categories
+    name_en: "Categories"
+    name_zh: 范畴
+    order: 1
+    entries:
+      - what-is-composition
+      - category
+      - identity-morphism
+      - composition-in-rust
+    description_zh: 对象、态射、组合与恒等:范畴的全部定义,以及它为什么是编程的模型。
+
+  - dir: types-and-functions
+    part: categories
+    name_en: "Types and Functions"
+    name_zh: 类型与函数
+    order: 2
+    entries:
+      - types-as-sets
+      - void-unit-bool
+      - pure-functions
+    description_zh: 集合范畴 Set:类型即集合,函数即态射,纯函数即可记忆化的函数。
+
+  - dir: small-categories
+    part: categories
+    name_en: "Categories Great and Small"
+    name_zh: 大小范畴
+    order: 3
+    entries:
+      - free-category
+      - order-categories
+      - monoid
+      - hom-set
+    description_zh: 从图、序和幺半群生成的范畴:极简例子里看清范畴结构。
+
+  - dir: kleisli
+    part: categories
+    name_en: "Kleisli Categories"
+    name_zh: Kleisli 范畴
+    order: 4
+    entries:
+      - writer-category
+      - kleisli-composition
+      - option-kleisli
+    description_zh: 装饰函数的组合:日志、失败与副作用的第一次范畴化。
+
+  - dir: universal-constructions
+    part: categories
+    name_en: "Universal Constructions"
+    name_zh: 泛构造
+    order: 5
+    entries:
+      - universal-construction
+      - initial-terminal
+      - duality
+      - isomorphism
+      - product
+      - coproduct
+    description_zh: 不看内部、只看关系地定义对象:初始与终端、积与余积、对偶与同构。
+
+  - dir: adt
+    part: functors
+    name_en: "Algebraic Data Types"
+    name_zh: 代数数据类型
+    order: 6
+    entries:
+      - product-types
+      - sum-types
+      - algebra-of-types
+    description_zh: struct 与 enum 的代数:类型运算的加法、乘法与分配律。
+
+  - dir: functors
+    part: functors
+    name_en: "Functors"
+    name_zh: 函子
+    order: 7
+    entries:
+      - functor
+      - functor-laws
+      - option-functor
+      - list-functor
+      - reader-functor
+      - const-functor
+      - functor-composition
+      - hkt-in-rust
+    description_zh: 保结构的映射及其法则;Option、Vec、Reader、Const 四个标本,以及 Rust 缺失高阶类型的真相。
+
+  - dir: functoriality
+    part: functors
+    name_en: "Functoriality"
+    name_zh: 函子性
+    order: 8
+    entries:
+      - bifunctor
+      - profunctor
+      - functorial-adt
+    description_zh: 多参数的函子:双函子、Profunctor,以及 ADT 自动获得的函子性。
+
+  - dir: function-types
+    part: functors
+    name_en: "Function Types"
+    name_zh: 函数类型
+    order: 9
+    entries:
+      - exponential
+      - currying
+      - cartesian-closed
+      - curry-howard
+    description_zh: 指数对象:函数类型的泛构造、柯里化与 Curry-Howard 同构。
+
+  - dir: natural-transformations
+    part: functors
+    name_en: "Natural Transformations"
+    name_zh: 自然变换
+    order: 10
+    entries:
+      - natural-transformation
+      - naturality
+      - parametricity
+      - functor-category
+    description_zh: 函子之间的态射:自然性方块、参数性定理与函子范畴。
+
+  - dir: limits
+    part: structure
+    name_en: "Limits and Colimits"
+    name_zh: 极限与余极限
+    order: 11
+    entries:
+      - declarative-programming
+      - cone-limit
+      - colimit
+      - continuity-of-functors
+    description_zh: 锥与余锥:把积、余积、终端对象统一成同一种泛构造。
+
+  - dir: free-structures
+    part: structure
+    name_en: "Free Structures"
+    name_zh: 自由结构
+    order: 12
+    entries:
+      - free-monoid
+      - representable-functor
+    description_zh: 自由幺半群与可表示函子:『不做多余假设』的构造与『容器即查表』的洞见。
+
+  - dir: yoneda
+    part: structure
+    name_en: "Yoneda"
+    name_zh: Yoneda
+    order: 13
+    entries:
+      - yoneda-lemma
+      - yoneda-embedding
+    description_zh: 范畴论的顶点定理:对象由它与全体对象的关系完全决定。
+
+  - dir: adjunctions
+    part: composition-at-scale
+    name_en: "Adjunctions"
+    name_zh: 伴随
+    order: 14
+    entries:
+      - adjunction
+      - product-exponential-adjunction
+      - free-forgetful
+    description_zh: 成对出现的函子:积与指数、自由与遗忘,单子的前夜。
+
+  - dir: monads
+    part: composition-at-scale
+    name_en: "Monads"
+    name_zh: 单子
+    order: 15
+    entries:
+      - monad
+      - monad-laws
+      - monads-in-rust
+      - monads-and-effects
+    description_zh: 自函子范畴上的幺半群:Kleisli 组合的回响,以及 ? 运算符里的单子形态。
+
+  - dir: algebras
+    part: composition-at-scale
+    name_en: "F-Algebras"
+    name_zh: F-代数
+    order: 16
+    entries:
+      - f-algebra
+      - catamorphism
+      - f-coalgebra
+    description_zh: 递归数据结构的代数:不动点、fold 的普适性与无限结构的余代数。
+
+  - dir: further
+    part: composition-at-scale
+    name_en: "Further Topics"
+    name_zh: 延伸主题
+    order: 17
+    entries:
+      - ends-coends
+      - kan-extensions
+      - enriched-categories
+      - topos
+    description_zh: 几扇门:End 与 Coend、Kan 扩展、富化范畴与 Topos,各给一瞥。
